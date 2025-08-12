@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import {AppProvider} from "./context/AppContext.jsx";
+import AuthLayout from "./layout/AuthLayout.jsx";
+import ProtectedRoute from "./routes/ProtectedRoute.jsx";
+import MainLayout from "./layout/MainLayout.jsx";
+import SignIn from "./pages/auth/SignIn.jsx";
+import Dashboard from "./pages/dashboard/Dashboard.jsx";
+import Setting from "./pages/setting/Setting.jsx";
+import Profile from "./pages/profile/Profile.jsx";
+import Product from "./pages/product/Product.jsx";
+import Categories from "./pages/categories/Categories.jsx";
+import AddProduct from "./pages/product/AddProduct.jsx";
+import Home from "./pages/home/Home.jsx";
 
 function App() {
-  const [count, setCount] = useState(0)
+    return (
+        <AppProvider>
+            <Router>
+                <Routes>
+                    {/* Public Routes with Auth Layout */}
+                    <Route path="/" element={<AuthLayout />}>
+                        <Route index element={<Home />} />
+                        <Route path="login" element={<SignIn />} />
+                        {/*<Route path="register" element={<RegisterPage />} />*/}
+                    </Route>
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+                    {/* Protected Admin Routes with Main Layout */}
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute>
+                                <MainLayout />
+                            </ProtectedRoute>
+                        }
+                    >
+                        <Route index element={<Navigate to="/admin/dashboard" replace />} />
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="products" element={<Product />} />
+                        <Route path="products/add" element={<AddProduct />} />
+                        {/*<Route path="products/edit/:id" element={<AddProduct />} />*/}
+                        <Route path="categories" element={<Categories />} />
+                        <Route path="profile" element={<Profile />} />
+                        <Route path="settings" element={<Setting />} />
+                    </Route>
+
+                    {/* Catch all route */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+            </Router>
+        </AppProvider>
+    );
 }
 
-export default App
+export default App;
