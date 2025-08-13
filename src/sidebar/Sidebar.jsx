@@ -29,7 +29,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
 
     const handleNavigation = (path) => {
         navigate(path);
-        setSidebarOpen(false);
+        if (isMobile) {
+            setSidebarOpen(false);
+        }
     };
 
     const handleLogout = () => {
@@ -41,18 +43,24 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
         return location.pathname === path;
     };
 
+    const isActiveParent = (children) => {
+        return children.some(child => location.pathname === child.path);
+    };
+
     return (
         <div style={{
             position: 'fixed',
             left: sidebarOpen || !isMobile ? 0 : '-280px',
-            top: 0,
+            top: '4rem', // Start below navbar (navbar height is 4rem)
             width: '280px',
-            height: '100vh',
+            height: 'calc(100vh - 4rem)', // Full height minus navbar
             background: t.cardBg,
             borderRight: `1px solid ${t.border}`,
-            transition: 'left 0.3s',
-            zIndex: 999
+            transition: 'left 0.3s ease',
+            zIndex: 999,
+            overflow: 'auto' // Allow scrolling if content is too long
         }}>
+            {/* Sidebar Header */}
             <div style={{
                 padding: '1rem',
                 borderBottom: `1px solid ${t.border}`,
@@ -60,7 +68,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                 justifyContent: 'space-between',
                 alignItems: 'center'
             }}>
-                <h2 style={{ margin: 0, color: t.text, fontSize: '1.2rem' }}>Admin Panel</h2>
+                <h2 style={{ margin: 0, color: t.text, fontSize: '1.2rem' }}>Menu</h2>
                 {isMobile && (
                     <button
                         onClick={() => setSidebarOpen(false)}
@@ -68,7 +76,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                             background: 'none',
                             border: 'none',
                             color: t.text,
-                            cursor: 'pointer'
+                            cursor: 'pointer',
+                            padding: '0.25rem',
+                            borderRadius: '0.25rem'
                         }}
                     >
                         <X size={20} />
@@ -76,7 +86,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                 )}
             </div>
 
-            <nav style={{ padding: '1rem 0' }}>
+            {/* Navigation Menu */}
+            <nav style={{ padding: '1rem 0', flex: 1 }}>
                 {menuItems.map((item) => (
                     <div key={item.id}>
                         <button
@@ -89,24 +100,45 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                             }}
                             style={{
                                 width: '100%',
-                                background: isActiveRoute(item.path) ? t.gradient : 'none',
+                                background: isActiveRoute(item.path) || (item.children && isActiveParent(item.children))
+                                    ? t.primary
+                                    : 'none',
                                 border: 'none',
-                                color: isActiveRoute(item.path) ? 'white' : t.text,
+                                color: isActiveRoute(item.path) || (item.children && isActiveParent(item.children))
+                                    ? 'white'
+                                    : t.text,
                                 padding: '0.75rem 1rem',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '0.75rem',
                                 cursor: 'pointer',
-                                fontSize: '0.9rem'
+                                fontSize: '0.9rem',
+                                transition: 'all 0.2s ease',
+                                textAlign: 'left'
+                            }}
+                            onMouseEnter={(e) => {
+                                if (!isActiveRoute(item.path) && !(item.children && isActiveParent(item.children))) {
+                                    e.target.style.background = t.border;
+                                }
+                            }}
+                            onMouseLeave={(e) => {
+                                if (!isActiveRoute(item.path) && !(item.children && isActiveParent(item.children))) {
+                                    e.target.style.background = 'none';
+                                }
                             }}
                         >
                             <item.icon size={18} />
                             <span style={{ flex: 1, textAlign: 'left' }}>{item.label}</span>
-                            {item.children && (activeAccordion === item.id ? <ChevronDown size={16} /> : <ChevronRight size={16} />)}
+                            {item.children && (
+                                activeAccordion === item.id ?
+                                <ChevronDown size={16} /> :
+                                <ChevronRight size={16} />
+                            )}
                         </button>
 
+                        {/* Submenu */}
                         {item.children && activeAccordion === item.id && (
-                            <div style={{ backgroundColor: t.bg }}>
+                            <div style={{ backgroundColor: 'rgba(0,0,0,0.05)' }}>
                                 {item.children.map((child) => (
                                     <button
                                         key={child.id}
@@ -116,9 +148,21 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                                             background: isActiveRoute(child.path) ? t.primary : 'none',
                                             border: 'none',
                                             color: isActiveRoute(child.path) ? 'white' : t.textSec,
-                                            padding: '0.5rem 1rem 0.5rem 2.5rem',
+                                            padding: '0.5rem 1rem 0.5rem 3rem',
                                             cursor: 'pointer',
-                                            fontSize: '0.85rem'
+                                            fontSize: '0.85rem',
+                                            textAlign: 'left',
+                                            transition: 'all 0.2s ease'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!isActiveRoute(child.path)) {
+                                                e.target.style.background = 'rgba(0,0,0,0.1)';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!isActiveRoute(child.path)) {
+                                                e.target.style.background = 'none';
+                                            }
                                         }}
                                     >
                                         {child.label}
@@ -130,7 +174,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                 ))}
             </nav>
 
-            <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem' }}>
+            {/* Logout Button */}
+            <div style={{
+                padding: '1rem',
+                borderTop: `1px solid ${t.border}`
+            }}>
                 <button
                     onClick={handleLogout}
                     style={{
@@ -144,8 +192,12 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '0.5rem'
+                        gap: '0.5rem',
+                        fontSize: '0.9rem',
+                        transition: 'opacity 0.2s ease'
                     }}
+                    onMouseEnter={(e) => e.target.style.opacity = '0.9'}
+                    onMouseLeave={(e) => e.target.style.opacity = '1'}
                 >
                     <LogOut size={16} /> Logout
                 </button>
@@ -155,206 +207,3 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
 };
 
 export default Sidebar;
-
-// import React, { useState } from 'react';
-// import {
-//   X, BarChart3, Package, Grid, UserCircle, Settings, LogOut,
-//   ChevronDown, ChevronRight
-// } from 'lucide-react';
-//
-// const Sidebar = ({
-//   sidebarOpen,
-//   setSidebarOpen,
-//   isMobile,
-//   currentPage,
-//   setCurrentPage,
-//   setIsLoggedIn,
-//   isDarkMode,
-//   theme
-// }) => {
-//   const [activeAccordion, setActiveAccordion] = useState('');
-//   const t = isDarkMode ? theme.dark : theme.light;
-//
-//   const menuItems = [
-//     { id: 'dashboard', label: 'Dashboard', icon: BarChart3, page: 'dashboard' },
-//     {
-//       id: 'products', label: 'Products', icon: Package,
-//       children: [
-//         { id: 'all-products', label: 'All Products', page: 'products' },
-//         { id: 'add-product', label: 'Add Product', page: 'add-product' }
-//       ]
-//     },
-//     { id: 'categories', label: 'Categories', icon: Grid, page: 'categories' },
-//     { id: 'profile', label: 'Profile', icon: UserCircle, page: 'profile' },
-//     { id: 'settings', label: 'Settings', icon: Settings, page: 'settings' }
-//   ];
-//
-//   return (
-//     <div style={{
-//       position: 'fixed',
-//       left: sidebarOpen || !isMobile ? 0 : '-280px',
-//       top: 0,
-//       width: '280px',
-//       height: '100vh',
-//       background: t.cardBg,
-//       borderRight: `1px solid ${t.border}`,
-//       transition: 'left 0.3s',
-//       zIndex: 999
-//     }}>
-//       <div style={{
-//         padding: '1rem',
-//         borderBottom: `1px solid ${t.border}`,
-//         display: 'flex',
-//         justifyContent: 'space-between',
-//         alignItems: 'center'
-//       }}>
-//         <h2 style={{ margin: 0, color: t.text, fontSize: '1.2rem' }}>Admin Panel</h2>
-//         <button
-//           onClick={() => setSidebarOpen(false)}
-//           style={{
-//             background: 'none',
-//             border: 'none',
-//             color: t.text,
-//             cursor: 'pointer',
-//             display: isMobile ? 'block' : 'none'
-//           }}
-//         >
-//           <X size={20} />
-//         </button>
-//       </div>
-//
-//       <nav style={{ padding: '1rem 0' }}>
-//         {menuItems.map((item) => (
-//           <div key={item.id}>
-//             <button
-//               onClick={() => {
-//                 if (item.children) {
-//                   setActiveAccordion(activeAccordion === item.id ? '' : item.id);
-//                 } else {
-//                   setCurrentPage(item.page);
-//                   setSidebarOpen(false);
-//                 }
-//               }}
-//               style={{
-//                 width: '100%',
-//                 background: currentPage === item.page ? t.gradient : 'none',
-//                 border: 'none',
-//                 color: currentPage === item.page ? 'white' : t.text,
-//                 padding: '0.75rem 1rem',
-//                 display: 'flex',
-//                 alignItems: 'center',
-//                 gap: '0.75rem',
-//                 cursor: 'pointer',
-//                 fontSize: '0.9rem'
-//               }}
-//             >
-//               <item.icon size={18} />
-//               <span style={{ flex: 1, textAlign: 'left' }}>{item.label}</span>
-//               {item.children && (activeAccordion === item.id ? <ChevronDown size={16} /> : <ChevronRight size={16} />)}
-//             </button>
-//
-//             {item.children && activeAccordion === item.id && (
-//               <div style={{ backgroundColor: t.bg }}>
-//                 {item.children.map((child) => (
-//                   <button
-//                     key={child.id}
-//                     onClick={() => { setCurrentPage(child.page); setSidebarOpen(false); }}
-//                     style={{
-//                       width: '100%',
-//                       background: currentPage === child.page ? t.primary : 'none',
-//                       border: 'none',
-//                       color: currentPage === child.page ? 'white' : t.textSec,
-//                       padding: '0.5rem 1rem 0.5rem 2.5rem',
-//                       cursor: 'pointer',
-//                       fontSize: '0.85rem'
-//                     }}
-//                   >
-//                     {child.label}
-//                   </button>
-//                 ))}
-//               </div>
-//             )}
-//           </div>
-//         ))}
-//       </nav>
-//
-//       <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem' }}>
-//         <button
-//           onClick={() => { setIsLoggedIn(false); setCurrentPage('home'); }}
-//           style={{
-//             width: '100%',
-//             background: t.danger,
-//             color: 'white',
-//             border: 'none',
-//             padding: '0.75rem',
-//             borderRadius: '8px',
-//             cursor: 'pointer',
-//             display: 'flex',
-//             alignItems: 'center',
-//             justifyContent: 'center',
-//             gap: '0.5rem'
-//           }}
-//         >
-//           <LogOut size={16} /> Logout
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-//
-// // Demo usage
-// const SidebarDemo = () => {
-//   const [sidebarOpen, setSidebarOpen] = useState(true);
-//   const [currentPage, setCurrentPage] = useState('dashboard');
-//   const [isDarkMode, setIsDarkMode] = useState(false);
-//
-//   const theme = {
-//     light: {
-//       bg: '#f8fafc', cardBg: '#ffffff', text: '#1e293b', textSec: '#64748b',
-//       border: '#e2e8f0', primary: '#3b82f6', success: '#10b981', danger: '#ef4444',
-//       gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-//     },
-//     dark: {
-//       bg: '#0f172a', cardBg: '#1e293b', text: '#f1f5f9', textSec: '#94a3b8',
-//       border: '#334155', primary: '#60a5fa', success: '#34d399', danger: '#f87171',
-//       gradient: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)'
-//     }
-//   };
-//
-//   const setIsLoggedIn = (status) => console.log('Logout:', status);
-//
-//   return (
-//     <div style={{ minHeight: '100vh', background: isDarkMode ? theme.dark.bg : theme.light.bg }}>
-//       <Sidebar
-//         sidebarOpen={sidebarOpen}
-//         setSidebarOpen={setSidebarOpen}
-//         isMobile={false}
-//         currentPage={currentPage}
-//         setCurrentPage={setCurrentPage}
-//         setIsLoggedIn={setIsLoggedIn}
-//         isDarkMode={isDarkMode}
-//         theme={theme}
-//       />
-//       <div style={{ marginLeft: '280px', padding: '2rem' }}>
-//         <p style={{ color: isDarkMode ? theme.dark.text : theme.light.text }}>
-//           Current page: {currentPage}
-//         </p>
-//         <button
-//           onClick={() => setIsDarkMode(!isDarkMode)}
-//           style={{
-//             padding: '0.5rem 1rem',
-//             borderRadius: '4px',
-//             border: 'none',
-//             background: '#3b82f6',
-//             color: 'white',
-//             cursor: 'pointer'
-//           }}
-//         >
-//           Toggle Dark Mode
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-//
-// export default SidebarDemo;

@@ -1,29 +1,30 @@
 import React from 'react';
+import { useApp } from '../../context/AppContext.jsx';
+import Dashboard from "../dashboard/Dashboard.jsx";
 
-const Home = ({
-  isLoggedIn,
-  setCurrentPage,
-  isDarkMode,
-  isMobile,
-  theme = {
-    light: {
-      bg: '#f8fafc', cardBg: '#ffffff', text: '#1e293b', textSec: '#64748b',
-      border: '#e2e8f0', primary: '#3b82f6', success: '#10b981', danger: '#ef4444',
-      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    },
-    dark: {
-      bg: '#0f172a', cardBg: '#1e293b', text: '#f1f5f9', textSec: '#94a3b8',
-      border: '#334155', primary: '#60a5fa', success: '#34d399', danger: '#f87171',
-      gradient: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)'
-    }
-  },
-  products = [
+const Home = () => {
+  // Context থেকে data নিন
+  const { isDarkMode, theme, isLoggedIn } = useApp();
+
+  // Demo products - এগুলো context থেকেও আনতে পারেন
+  const products = [
     { id: 1, name: 'MacBook Pro', price: 1299, category: 'Electronics', image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop' },
     { id: 2, name: 'iPhone 15', price: 999, category: 'Electronics', image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop' },
     { id: 3, name: 'Nike Shoes', price: 150, category: 'Fashion', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop' }
-  ]
-}) => {
+  ];
+
+  // Mobile detection
+  const isMobile = window.innerWidth < 768;
+
   const t = isDarkMode ? theme.dark : theme.light;
+
+  const handleNavigation = (page) => {
+    if (page === 'auth') {
+      window.location.href = '/signin';
+    } else if (page === 'dashboard') {
+      window.location.href = '/admin/dashboard';
+    }
+  };
 
   return (
     <div style={{ background: t.bg, minHeight: '100vh' }}>
@@ -49,7 +50,7 @@ const Home = ({
         </p>
         {!isLoggedIn && (
           <button
-            onClick={() => setCurrentPage('auth')}
+            onClick={() => handleNavigation('auth')}
             style={{
               background: 'white',
               color: t.primary,
@@ -58,15 +59,18 @@ const Home = ({
               borderRadius: '8px',
               cursor: 'pointer',
               fontSize: '1rem',
-              fontWeight: '600'
+              fontWeight: '600',
+              transition: 'transform 0.2s ease',
             }}
+            onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
+            onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
           >
             Get Started
           </button>
         )}
         {isLoggedIn && (
           <button
-            onClick={() => setCurrentPage('dashboard')}
+            onClick={() => handleNavigation('dashboard')}
             style={{
               background: 'white',
               color: t.primary,
@@ -75,12 +79,16 @@ const Home = ({
               borderRadius: '8px',
               cursor: 'pointer',
               fontSize: '1rem',
-              fontWeight: '600'
+              fontWeight: '600',
+              transition: 'transform 0.2s ease',
             }}
+            onMouseOver={(e) => e.target.style.transform = 'translateY(-2px)'}
+            onMouseOut={(e) => e.target.style.transform = 'translateY(0)'}
           >
             Go to Dashboard
           </button>
         )}
+        <Dashboard />
       </section>
 
       <section style={{
@@ -88,6 +96,16 @@ const Home = ({
         maxWidth: '1200px',
         margin: '0 auto'
       }}>
+        <h2 style={{
+          textAlign: 'center',
+          color: t.text,
+          marginBottom: '2rem',
+          fontSize: '2rem',
+          fontWeight: '700'
+        }}>
+          Featured Products
+        </h2>
+
         <div style={{
           display: 'grid',
           gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
@@ -100,7 +118,17 @@ const Home = ({
                 background: t.cardBg,
                 borderRadius: '12px',
                 overflow: 'hidden',
-                border: `1px solid ${t.border}`
+                border: `1px solid ${t.border}`,
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                cursor: 'pointer'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-8px)';
+                e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.1)';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                e.currentTarget.style.boxShadow = 'none';
               }}
             >
               <img
@@ -112,22 +140,25 @@ const Home = ({
                   objectFit: 'cover'
                 }}
               />
-              <div style={{ padding: '1rem' }}>
+              <div style={{ padding: '1.5rem' }}>
                 <h3 style={{
                   margin: '0 0 0.5rem',
-                  color: t.text
+                  color: t.text,
+                  fontSize: '1.2rem',
+                  fontWeight: '600'
                 }}>
                   {product.name}
                 </h3>
                 <p style={{
                   margin: '0 0 1rem',
-                  color: t.textSec
+                  color: t.textSec,
+                  fontSize: '0.9rem'
                 }}>
                   {product.category}
                 </p>
                 <p style={{
                   margin: 0,
-                  fontSize: '1.2rem',
+                  fontSize: '1.3rem',
                   fontWeight: '700',
                   color: t.primary
                 }}>
@@ -138,72 +169,37 @@ const Home = ({
           ))}
         </div>
       </section>
-    </div>
-  );
-};
 
-// ডেমো কম্পোনেন্টের নাম পাল্টে দিলাম
-const HomeDemo = () => {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
-  const [isDarkMode, setIsDarkMode] = React.useState(false);
-
-  const theme = {
-    light: {
-      bg: '#f8fafc', cardBg: '#ffffff', text: '#1e293b', textSec: '#64748b',
-      border: '#e2e8f0', primary: '#3b82f6', success: '#10b981', danger: '#ef4444',
-      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-    },
-    dark: {
-      bg: '#0f172a', cardBg: '#1e293b', text: '#f1f5f9', textSec: '#94a3b8',
-      border: '#334155', primary: '#60a5fa', success: '#34d399', danger: '#f87171',
-      gradient: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)'
-    }
-  };
-
-  const setCurrentPage = (page) => {
-    console.log('Navigate to:', page);
-    if (page === 'auth') setIsLoggedIn(!isLoggedIn);
-  };
-
-  return (
-    <div>
-      <div style={{ padding: '1rem', background: isDarkMode ? theme.dark.cardBg : theme.light.cardBg }}>
-        <button
-          onClick={() => setIsDarkMode(!isDarkMode)}
-          style={{
-            padding: '0.5rem 1rem',
-            borderRadius: '4px',
-            border: 'none',
-            background: '#3b82f6',
-            color: 'white',
-            cursor: 'pointer',
-            marginRight: '1rem'
-          }}
-        >
-          Toggle Dark Mode
-        </button>
-        <button
-          onClick={() => setIsLoggedIn(!isLoggedIn)}
-          style={{
-            padding: '0.5rem 1rem',
-            borderRadius: '4px',
-            border: 'none',
-            background: '#10b981',
-            color: 'white',
-            cursor: 'pointer'
-          }}
-        >
-          Toggle Login Status
-        </button>
-      </div>
-
-      <Home
-        isLoggedIn={isLoggedIn}
-        setCurrentPage={setCurrentPage}
-        isDarkMode={isDarkMode}
-        isMobile={false}
-        theme={theme}
-      />
+      <section style={{
+        background: t.cardBg,
+        padding: '3rem 1rem',
+        borderTop: `1px solid ${t.border}`
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          textAlign: 'center'
+        }}>
+          <h2 style={{
+            color: t.text,
+            marginBottom: '1rem',
+            fontSize: '2rem',
+            fontWeight: '700'
+          }}>
+            Why Choose Our Admin Panel?
+          </h2>
+          <p style={{
+            color: t.textSec,
+            fontSize: '1.1rem',
+            lineHeight: '1.6',
+            maxWidth: '600px',
+            margin: '0 auto'
+          }}>
+            Experience seamless product management with our intuitive interface.
+            Built with modern React technologies and designed for efficiency.
+          </p>
+        </div>
+      </section>
     </div>
   );
 };

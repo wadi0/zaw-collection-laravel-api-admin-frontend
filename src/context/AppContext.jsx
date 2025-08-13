@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const AppContext = createContext();
 
@@ -11,11 +11,38 @@ export const useApp = () => {
 };
 
 export const AppProvider = ({ children }) => {
+    // Check localStorage immediately for initial state
+    const getInitialAuthState = () => {
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            try {
+                const userData = JSON.parse(storedUser);
+                return { isLoggedIn: true, user: userData };
+            } catch (error) {
+                localStorage.removeItem("user");
+                return { isLoggedIn: false, user: null };
+            }
+        }
+        return { isLoggedIn: false, user: null };
+    };
+
+    const initialAuth = getInitialAuthState();
+
     const [isDarkMode, setIsDarkMode] = useState(false);
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [user, setUser] = useState(null);
+    const [isLoggedIn, setIsLoggedIn] = useState(initialAuth.isLoggedIn);
+    const [user, setUser] = useState(initialAuth.user);
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
+
+    // Check localStorage on app start - now only for debugging
+    useEffect(() => {
+        console.log('AppContext - Initial state set:', { isLoggedIn, user });
+    }, []);
+
+    // Debug log whenever isLoggedIn changes
+    useEffect(() => {
+        console.log('AppContext - isLoggedIn changed to:', isLoggedIn);
+    }, [isLoggedIn]);
 
     const theme = {
         light: {
@@ -30,19 +57,29 @@ export const AppProvider = ({ children }) => {
         }
     };
 
+    // Add the toggleDarkMode function that your navbar expects
+    const toggleDarkMode = () => {
+        setIsDarkMode(prevMode => !prevMode);
+    };
+
     const login = (userData) => {
+        console.log('AppContext - Login called with:', userData);
         setIsLoggedIn(true);
         setUser(userData);
+        localStorage.setItem("user", JSON.stringify(userData));
     };
 
     const logout = () => {
+        console.log('AppContext - Logout called');
         setIsLoggedIn(false);
         setUser(null);
+        localStorage.removeItem("user");
     };
 
     const value = {
         isDarkMode,
         setIsDarkMode,
+        toggleDarkMode,
         isLoggedIn,
         user,
         products,

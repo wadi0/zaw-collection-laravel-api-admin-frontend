@@ -12,7 +12,7 @@ import path from "../../routes/path.jsx";
 const SignIn = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { isDarkMode } = useApp(); // Use the context
+    const { isDarkMode, login } = useApp(); // Add login function from context
 
     const initialValues = {
         email: '',
@@ -40,13 +40,23 @@ const SignIn = () => {
         try {
             await AxiosServices.post(ApiUrlServices.SIGN_IN, payload)
                 .then((res) => {
+                    // Save user data to localStorage
                     localStorage.setItem("user", JSON.stringify(res.data.result));
+
+                    // Call login function from AppContext to update state
+                    login(res.data.result);
+
+                    console.log('Login successful, user logged in:', res.data.result);
+
                     resetForm();
-                    navigate(path.home);
-                    // toast.success("Sign Up Successfully.")
+
+                    // Navigate to admin dashboard instead of home
+                    navigate('/admin/dashboard');
+                    // toast.success("Sign In Successfully.")
                 })
         } catch (error) {
             const emailError = error?.response?.data?.msg?.email;
+            console.error('Login error:', error);
             // if (emailError?.length) {
             //     toast.error(emailError[0]);
             // } else {
@@ -79,7 +89,7 @@ const SignIn = () => {
                     </div>
                 </div>
                 <div className="signin-content">
-                    <h2 className="signin-title">Sign Up your account</h2>
+                    <h2 className="signin-title">Sign In to your account</h2>
                     <Formik
                         initialValues={initialValues}
                         validate={validate}
@@ -109,7 +119,7 @@ const SignIn = () => {
                             <CustomButton
                                 isLoading={loading}
                                 type="submit"
-                                label="Sign Up"
+                                label="Sign In"
                                 btnClassName="default-submit-btn signin-btn"
                             />
                         </Form>

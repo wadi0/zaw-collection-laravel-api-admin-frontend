@@ -1,0 +1,618 @@
+// Variables
+$primary: #3b82f6;
+$primary-light: #eff6ff;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-500: #6b7280;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+$white: #ffffff;
+$red: #ef4444;
+$red-600: #dc2626;
+
+// Dark mode variables
+$dark-bg: #1f2937;
+$dark-bg-secondary: #374151;
+$dark-text: #f9fafb;
+$dark-text-secondary: #d1d5db;
+$dark-border: #4b5563;
+
+// Mixins
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin transition($duration: 0.2s) {
+  transition: all $duration ease;
+}
+
+// Main navbar
+.navbar {
+  background: $white;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  @include flex-between;
+  height: 4rem;
+}
+
+// Brand section
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  .logo {
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(45deg, $primary, #8b5cf6);
+    border-radius: 0.5rem;
+    @include flex-center;
+    color: $white;
+    font-weight: bold;
+  }
+
+  .brand-text {
+    font-weight: bold;
+    font-size: 1.25rem;
+    color: $gray-900;
+  }
+}
+
+// Desktop navigation
+.nav-menu {
+  display: none;
+  gap: 0.5rem;
+
+  @media (min-width: 1024px) {
+    display: flex;
+  }
+}
+
+.nav-item {
+  position: relative;
+
+  .dropdown-menu {
+    display: none;
+  }
+
+  &:hover .dropdown-menu,
+  .dropdown-menu.show {
+    display: block;
+  }
+
+  &:hover .nav-link .dropdown-arrow,
+  .nav-link.dropdown-open .dropdown-arrow {
+    transform: rotate(180deg);
+  }
+}
+
+.nav-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.75rem 0.5rem;
+  border-radius: 0.5rem;
+  font-size: 0.75rem;
+  color: $gray-500;
+  text-decoration: none;
+  border: none;
+  background: none;
+  cursor: pointer;
+  min-width: 4rem;
+  @include transition;
+
+  &:hover {
+    background: $gray-100;
+    color: $primary;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  &.active,
+  &.dropdown-open {
+    background: $primary-light;
+    color: $primary;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
+  }
+
+  .nav-text {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    .dropdown-arrow {
+      @include transition;
+    }
+  }
+}
+
+// Dark mode styles
+.navbar.dark-mode {
+  background: $dark-bg;
+  border-bottom-color: $dark-border;
+
+  .brand .brand-text {
+    color: $dark-text;
+  }
+
+  .nav-link {
+    color: $dark-text-secondary;
+
+    &:hover {
+      background: $dark-bg-secondary;
+      color: $primary;
+    }
+
+    &.active,
+    &.dropdown-open {
+      background: rgba($primary, 0.2);
+      color: $primary;
+    }
+  }
+
+  .dropdown-menu,
+  .profile-dropdown {
+    background: $dark-bg-secondary;
+    border-color: $dark-border;
+
+    &::before {
+      background: $dark-bg-secondary;
+      border-color: $dark-border;
+    }
+  }
+
+  .dropdown-item,
+  .profile-item {
+    color: $dark-text-secondary;
+
+    &:hover {
+      background: $dark-bg;
+      color: $primary;
+    }
+
+    &.logout:hover {
+      background: rgba($red, 0.1);
+    }
+  }
+
+  .search-input {
+    background: $dark-bg-secondary;
+    border-color: $dark-border;
+    color: $dark-text;
+
+    &::placeholder {
+      color: $dark-text-secondary;
+    }
+
+    &:focus {
+      border-color: $primary;
+    }
+  }
+
+  .notification,
+  .mobile-btn,
+  .theme-toggle {
+    color: $dark-text-secondary;
+
+    &:hover {
+      background: $dark-bg-secondary;
+      color: $primary;
+    }
+  }
+
+  .profile-btn:hover {
+    background: $dark-bg-secondary;
+  }
+
+  .profile-info {
+    border-bottom-color: $dark-border;
+
+    .profile-name {
+      color: $dark-text;
+    }
+
+    .profile-email {
+      color: $dark-text-secondary;
+    }
+  }
+
+  .mobile-menu {
+    background: $dark-bg;
+    border-top-color: $dark-border;
+
+    .mobile-search .search-input {
+      background: $dark-bg-secondary;
+      border-color: $dark-border;
+      color: $dark-text;
+    }
+
+    .mobile-nav-link {
+      color: $dark-text-secondary;
+
+      &:hover {
+        background: $dark-bg-secondary;
+        color: $primary;
+      }
+
+      &.active {
+        background: rgba($primary, 0.2);
+        color: $primary;
+      }
+    }
+
+    .mobile-dropdown-item {
+      color: $dark-text-secondary;
+
+      &:hover {
+        background: $dark-bg-secondary;
+        color: $primary;
+      }
+    }
+  }
+}
+
+// Dropdown menu
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 0.25rem);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 12rem;
+  background: $white;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border: 1px solid $gray-200;
+  padding: 0.5rem 0;
+  z-index: 50;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background: $white;
+    border: 1px solid $gray-200;
+    border-bottom: none;
+    border-right: none;
+    transform: translateX(-50%) rotate(45deg);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -0.25rem;
+    left: 0;
+    right: 0;
+    height: 0.25rem;
+    background: transparent;
+  }
+}
+
+.dropdown-item {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: $gray-500;
+  text-decoration: none;
+  font-size: 0.875rem;
+  border-radius: 0.375rem;
+  margin: 0 0.25rem;
+  @include transition;
+
+  &:hover {
+    background: $gray-100;
+    color: $primary;
+    transform: translateX(4px);
+  }
+}
+
+// Actions section
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+// Search
+.search {
+  display: none;
+  position: relative;
+
+  @media (min-width: 768px) {
+    display: block;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1rem;
+    height: 1rem;
+    color: #9ca3af;
+  }
+
+  .search-input {
+    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
+    width: 12rem;
+    border: 1px solid $gray-300;
+    border-radius: 0.5rem;
+    outline: none;
+    font-size: 0.875rem;
+    @include transition;
+
+    &:focus {
+      border-color: $primary;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+  }
+}
+
+// Theme toggle
+.theme-toggle {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: $gray-500;
+  @include transition;
+
+  &:hover {
+    background: $gray-100;
+    color: $primary;
+  }
+}
+
+// Notifications
+.notification {
+  position: relative;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: $gray-500;
+  @include transition;
+
+  &:hover {
+    background: $gray-100;
+    color: $primary;
+  }
+
+  .badge {
+    position: absolute;
+    top: -0.25rem;
+    right: -0.25rem;
+    width: 1rem;
+    height: 1rem;
+    background: $red;
+    color: $white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    @include flex-center;
+  }
+}
+
+// Profile
+.profile {
+  position: relative;
+
+  .profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background: $gray-100;
+    }
+  }
+
+  .avatar {
+    width: 2rem;
+    height: 2rem;
+    background: linear-gradient(45deg, #10b981, $primary);
+    border-radius: 50%;
+    @include flex-center;
+    color: $white;
+    font-weight: 600;
+    font-size: 0.875rem;
+  }
+
+  .profile-dropdown {
+    position: absolute;
+    right: 0;
+    top: 100%;
+    width: 12rem;
+    background: $white;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    border: 1px solid $gray-200;
+    padding: 0.5rem 0;
+    margin-top: 0.25rem;
+    z-index: 50;
+
+    .profile-info {
+      padding: 0.5rem 1rem;
+      border-bottom: 1px solid $gray-200;
+      margin-bottom: 0.5rem;
+
+      .profile-name {
+        font-weight: 600;
+        color: $gray-900;
+        margin: 0;
+      }
+
+      .profile-email {
+        font-size: 0.75rem;
+        color: $gray-500;
+        margin: 0;
+      }
+    }
+
+    .profile-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      color: $gray-500;
+      text-decoration: none;
+      font-size: 0.875rem;
+      @include transition;
+
+      &:hover {
+        background: $gray-100;
+        color: $primary;
+      }
+
+      &.logout {
+        color: $red-600;
+        border-top: 1px solid $gray-200;
+        margin-top: 0.5rem;
+        padding-top: 0.75rem;
+      }
+    }
+  }
+}
+
+// Mobile toggle
+.mobile-btn {
+  display: block;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  color: $gray-500;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  @include transition;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
+  &:hover {
+    background: $gray-100;
+    color: $primary;
+  }
+}
+
+// Mobile menu
+.mobile-menu {
+  background: $white;
+  border-top: 1px solid $gray-200;
+  padding: 1rem;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
+  .mobile-search {
+    margin-bottom: 1rem;
+
+    @media (min-width: 768px) {
+      display: none;
+    }
+
+    .mobile-search-container {
+      position: relative;
+
+      .search-icon {
+        position: absolute;
+        left: 0.75rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #9ca3af;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 0.75rem 0.75rem 0.75rem 2.25rem;
+        border: 1px solid $gray-300;
+        border-radius: 0.5rem;
+        outline: none;
+      }
+    }
+  }
+
+  .mobile-nav-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .mobile-nav-link {
+    @include flex-between;
+    width: 100%;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    border-radius: 0.5rem;
+    color: $gray-500;
+    text-decoration: none;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background: $gray-100;
+      color: $primary;
+    }
+
+    &.active {
+      background: $primary-light;
+      color: $primary;
+    }
+
+    .mobile-nav-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+  }
+
+  .mobile-dropdown {
+    margin-left: 2rem;
+    margin-top: 0.5rem;
+
+    .mobile-dropdown-item {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      color: $gray-500;
+      text-decoration: none;
+      border-radius: 0.375rem;
+      margin-bottom: 0.25rem;
+      @include transition;
+
+      &:hover {
+        background: $gray-100;
+        color: $primary;
+      }
+    }
+  }
+}

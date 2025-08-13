@@ -1,15 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from "../navbar/Navbar.jsx";
-import {Sidebar} from "lucide-react";
+import Sidebar from "../sidebar/Sidebar.jsx"; // ✅ Correct import - your custom Sidebar component
+import { useApp } from "../context/AppContext.jsx";
+import './mainLayout.scss'; // Add CSS file for styling
 
 const MainLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const { isDarkMode, theme } = useApp();
+
+    const t = isDarkMode ? theme.dark : theme.light;
 
     useEffect(() => {
         const checkScreenSize = () => {
             setIsMobile(window.innerWidth <= 768);
+
+            // Auto open sidebar on desktop
+            if (window.innerWidth > 768) {
+                setSidebarOpen(true);
+            } else {
+                setSidebarOpen(false);
+            }
         };
 
         checkScreenSize();
@@ -17,30 +29,57 @@ const MainLayout = () => {
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
+    // Debug logs
+    console.log('MainLayout - sidebarOpen:', sidebarOpen);
+    console.log('MainLayout - isMobile:', isMobile);
+
     return (
-        <div className="admin-layout">
+        <div className={`admin-layout ${isDarkMode ? 'dark-mode' : ''}`}>
+            {/* Navbar at the top */}
             <Navbar
-                isLoggedIn={true}
                 setSidebarOpen={setSidebarOpen}
                 sidebarOpen={sidebarOpen}
                 isMobile={isMobile}
             />
 
-            <Sidebar
-                sidebarOpen={sidebarOpen}
-                setSidebarOpen={setSidebarOpen}
-                isMobile={isMobile}
-            />
+            <div className="layout-body">
+                {/* Sidebar on the left */}
+                <Sidebar
+                    sidebarOpen={sidebarOpen}
+                    setSidebarOpen={setSidebarOpen}
+                    isMobile={isMobile}
+                />
 
-            <main className={`main-content ${!isMobile ? 'with-sidebar' : ''}`}>
-                <Outlet />
-            </main>
+                {/* Main content area */}
+                <main
+                    className={`main-content ${!isMobile && sidebarOpen ? 'with-sidebar' : ''}`}
+                    style={{
+                        marginLeft: !isMobile && sidebarOpen ? '280px' : '0',
+                        marginTop: '4rem', // Account for navbar height
+                        transition: 'margin-left 0.3s ease',
+                        minHeight: 'calc(100vh - 4rem)',
+                        background: t.bg,
+                        padding: '2rem'
+                    }}
+                >
+                    <Outlet />
+                </main>
+            </div>
 
             {/* Mobile sidebar overlay */}
             {sidebarOpen && isMobile && (
                 <div
                     className="sidebar-overlay"
                     onClick={() => setSidebarOpen(false)}
+                    style={{
+                        position: 'fixed',
+                        top: '4rem', // Start below navbar
+                        left: 0,
+                        width: '100%',
+                        height: 'calc(100% - 4rem)',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        zIndex: 998
+                    }}
                 />
             )}
         </div>
@@ -48,23 +87,3 @@ const MainLayout = () => {
 };
 
 export default MainLayout;
-
-// import React from 'react';
-// import {Outlet} from 'react-router-dom';
-//
-// const MainLayout = () => {
-//     return (
-//         <>
-//             <Navbar/>
-//
-//             <div className="main-layout">
-//                 <main className="main-content">
-//                     <Outlet/>
-//                 </main>
-//                 <Footer/>
-//             </div>
-//         </>
-//     );
-// };
-//
-// export default MainLayout;
