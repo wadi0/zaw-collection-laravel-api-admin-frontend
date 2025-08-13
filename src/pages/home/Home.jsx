@@ -5,7 +5,18 @@ const Home = ({
   setCurrentPage,
   isDarkMode,
   isMobile,
-  theme,
+  theme = {
+    light: {
+      bg: '#f8fafc', cardBg: '#ffffff', text: '#1e293b', textSec: '#64748b',
+      border: '#e2e8f0', primary: '#3b82f6', success: '#10b981', danger: '#ef4444',
+      gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    },
+    dark: {
+      bg: '#0f172a', cardBg: '#1e293b', text: '#f1f5f9', textSec: '#94a3b8',
+      border: '#334155', primary: '#60a5fa', success: '#34d399', danger: '#f87171',
+      gradient: 'linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%)'
+    }
+  },
   products = [
     { id: 1, name: 'MacBook Pro', price: 1299, category: 'Electronics', image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop' },
     { id: 2, name: 'iPhone 15', price: 999, category: 'Electronics', image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop' },

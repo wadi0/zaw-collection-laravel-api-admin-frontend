@@ -9,18 +9,21 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext.jsx";
 import path from "../../routes/path.jsx";
 
-const SignIn = () => {
+const SignUp = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     const { isDarkMode } = useApp(); // Use the context
 
     const initialValues = {
+        name: '',
         email: '',
         password: '',
     };
 
     const validate = (values) => {
         const errors = {};
+
+        if (!values.name) errors.name = "Name is required";
 
         if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(values.email)) errors.email = 'Invalid email format';
         if (!values.email.trim()) errors.email = 'Email is required';
@@ -34,15 +37,16 @@ const SignIn = () => {
     const handleSubmit = async (values, {resetForm}) => {
         setLoading(true);
         let payload = {
+            name: values.name,
             email: values.email,
             password: values.password
         }
         try {
-            await AxiosServices.post(ApiUrlServices.SIGN_IN, payload)
+            await AxiosServices.post(ApiUrlServices.SIGN_UP, payload)
                 .then((res) => {
-                    localStorage.setItem("user", JSON.stringify(res.data.result));
                     resetForm();
-                    navigate(path.home);
+                    // navigate(path.login); // Fix the path reference
+                    navigate(path.signin);
                     // toast.success("Sign Up Successfully.")
                 })
         } catch (error) {
@@ -88,6 +92,16 @@ const SignIn = () => {
                         <Form className="signin-form">
                             <div className="mb-3">
                                 <CustomInput
+                                    name="name"
+                                    type="text"
+                                    label="Name"
+                                    placeholder="Enter your name"
+                                    labelClassName="signin-label"
+                                    inputClassName="signin-input"
+                                />
+                            </div>
+                            <div className="mb-3">
+                                <CustomInput
                                     name="email"
                                     type="email"
                                     label="Email"
@@ -115,12 +129,12 @@ const SignIn = () => {
                         </Form>
                     </Formik>
                     <div className="forgot-pass-signup-link">
-                        <p className="already-account">Forgotten password?</p>
+                        <p className="already-account">Already have an account?</p>
                         <button
-                            onClick={() => navigate(path.signup)}
+                            onClick={() => navigate(path.signin)}
                             className="signup-link"
                         >
-                            Sign Up
+                            Sign In
                         </button>
                     </div>
                 </div>
@@ -129,4 +143,4 @@ const SignIn = () => {
     );
 };
 
-export default SignIn;
+export default SignUp;

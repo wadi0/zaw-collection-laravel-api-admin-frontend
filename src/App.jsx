@@ -12,6 +12,8 @@ import Product from "./pages/product/Product.jsx";
 import Categories from "./pages/categories/Categories.jsx";
 import AddProduct from "./pages/product/AddProduct.jsx";
 import Home from "./pages/home/Home.jsx";
+import path from "./routes/path.jsx";
+import SignUp from "./pages/auth/SignUp.jsx";
 
 function App() {
     return (
@@ -19,10 +21,10 @@ function App() {
             <Router>
                 <Routes>
                     {/* Public Routes with Auth Layout */}
-                    <Route path="/" element={<AuthLayout />}>
+                    <Route path={path.home} element={<AuthLayout />}>
                         <Route index element={<Home />} />
-                        <Route path="login" element={<SignIn />} />
-                        {/*<Route path="register" element={<RegisterPage />} />*/}
+                        <Route path={path.signin} element={<SignIn />} />
+                        <Route path={path.signup} element={<SignUp />} />
                     </Route>
 
                     {/* Protected Admin Routes with Main Layout */}
@@ -38,7 +40,6 @@ function App() {
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="products" element={<Product />} />
                         <Route path="products/add" element={<AddProduct />} />
-                        {/*<Route path="products/edit/:id" element={<AddProduct />} />*/}
                         <Route path="categories" element={<Categories />} />
                         <Route path="profile" element={<Profile />} />
                         <Route path="settings" element={<Setting />} />
