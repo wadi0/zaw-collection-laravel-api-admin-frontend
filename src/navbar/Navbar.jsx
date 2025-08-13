@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
   Home, Package, ShoppingCart, Users, BarChart3,
-  Tag, Truck, Bell, Search, Menu, X, ChevronDown, LogOut, User, Sun, Moon
+  Tag, Truck, Bell, Search, Menu, X, ChevronDown, LogOut, User, Sun, Moon, PanelRight
 } from 'lucide-react';
 import './navbar.scss';
 import {useApp} from "../context/AppContext.jsx";
@@ -11,6 +11,8 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
   const [profile, setProfile] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
 
   // Get current location for active state checking
   const location = useLocation();
@@ -42,6 +44,7 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
     setDropdown(null);
     setMobileOpen(false);
     setProfile(false);
+    setSearchOpen(false);
   }, [location.pathname]);
 
   const navItems = [
@@ -108,87 +111,126 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
     console.log('Navigating to:', path);
     setDropdown(null);
     setMobileOpen(false);
+    setSearchOpen(false);
+  };
+
+  const handleSearchToggle = () => {
+    setSearchOpen(!searchOpen);
+    if (!searchOpen) {
+      setDropdown(null);
+      setProfile(false);
+    }
+  };
+
+  const handleSearchClose = () => {
+    setSearchOpen(false);
+    setSearchValue('');
   };
 
   return (
     <nav className={`navbar ${isDarkMode ? 'dark-mode' : ''}`}>
+      {/* Sidebar Toggle - একদম left এ fixed position */}
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="sidebar-toggle-fixed"
+        title="Toggle Sidebar"
+      >
+        {sidebarOpen ? <X size={18} /> : <PanelRight size={18} />}
+      </button>
+
       <div className="container">
-        {/* Brand */}
+        {/* Brand - Logo center করার জন্য */}
         <div className="brand">
-          <Link to="/admin/dashboard" className="brand-link" style={{display: 'flex', alignItems: 'center', gap: '0.5rem', textDecoration: 'none'}}>
+          <Link to="/admin/dashboard" className="brand-link">
             <div className="logo">A</div>
             <span className="brand-text">Admin Panel</span>
           </Link>
         </div>
 
-        {/* Desktop Menu */}
-        <div className="nav-menu">
-          {navItems.map((item) => (
-            <div key={item.name} className="nav-item">
-              {item.dropdown ? (
-                <>
-                  <button
-                    onClick={(e) => handleDropdownToggle(item.name, e)}
-                    className={`nav-link ${isDropdownActive(item.dropdown) ? 'active' : ''} ${dropdown === item.name ? 'dropdown-open' : ''}`}
+        {/* Search Expanded View - শুধু menu এর জায়গায় */}
+        {searchOpen ? (
+          <div className="search-expanded">
+            <div className="search-input-container">
+              <input
+                type="text"
+                placeholder="Search anything..."
+                className="search-input-expanded"
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && console.log('Search:', searchValue)}
+                autoFocus
+              />
+              <button
+                onClick={() => console.log('Search:', searchValue)}
+                className="search-submit-btn"
+                title="Search"
+              >
+                <Search size={16} />
+              </button>
+              <button
+                onClick={handleSearchClose}
+                className="search-close-btn"
+                title="Close Search"
+              >
+                <X size={16} />
+              </button>
+            </div>
+          </div>
+        ) : (
+          /* Desktop Menu */
+          <div className="nav-menu">
+            {navItems.map((item) => (
+              <div key={item.name} className="nav-item">
+                {item.dropdown ? (
+                  <>
+                    <button
+                      onClick={(e) => handleDropdownToggle(item.name, e)}
+                      className={`nav-link ${isDropdownActive(item.dropdown) ? 'active' : ''} ${dropdown === item.name ? 'dropdown-open' : ''}`}
+                    >
+                      <item.icon size={20} />
+                      <div className="nav-text">
+                        <span>{item.name}</span>
+                        <ChevronDown size={12} className="dropdown-arrow" />
+                      </div>
+                    </button>
+                    <div className={`dropdown-menu ${dropdown === item.name ? 'show' : ''}`}>
+                      {item.dropdown.map((subItem) => (
+                        <Link
+                          key={subItem.name}
+                          to={subItem.href}
+                          className="dropdown-item"
+                          onClick={() => handleLinkClick(subItem.href)}
+                        >
+                          {subItem.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <Link
+                    to={item.href}
+                    className={`nav-link ${item.active ? 'active' : ''}`}
+                    onClick={handleLinkClick}
                   >
                     <item.icon size={20} />
-                    <div className="nav-text">
-                      <span>{item.name}</span>
-                      <ChevronDown size={12} className="dropdown-arrow" />
-                    </div>
-                  </button>
-                  <div className={`dropdown-menu ${dropdown === item.name ? 'show' : ''}`}>
-                    {item.dropdown.map((subItem) => (
-                      <Link
-                        key={subItem.name}
-                        to={subItem.href}
-                        className="dropdown-item"
-                        onClick={() => handleLinkClick(subItem.href)}
-                      >
-                        {subItem.name}
-                      </Link>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <Link
-                  to={item.href}
-                  className={`nav-link ${item.active ? 'active' : ''}`}
-                  onClick={handleLinkClick}
-                >
-                  <item.icon size={20} />
-                  <span>{item.name}</span>
-                </Link>
-              )}
-            </div>
-          ))}
-        </div>
-
-        {/* Actions */}
-        <div className="actions">
-          {/* Sidebar Toggle for Desktop */}
-          {!isMobile && (
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="sidebar-toggle"
-              style={{
-                padding: '0.5rem',
-                background: 'none',
-                border: 'none',
-                borderRadius: '0.5rem',
-                cursor: 'pointer',
-                color: isDarkMode ? '#d1d5db' : '#6b7280'
-              }}
-            >
-              <Menu size={20} />
-            </button>
-          )}
-
-          {/* Search */}
-          <div className="search">
-            <Search className="search-icon" />
-            <input type="text" placeholder="Search..." className="search-input" />
+                    <span>{item.name}</span>
+                  </Link>
+                )}
+              </div>
+            ))}
           </div>
+        )}
+
+        {/* Actions - right side এ থাকবে */}
+        <div className="actions">
+          {/* Search Toggle Button */}
+          <button
+            onClick={handleSearchToggle}
+            className="search-toggle"
+            title={searchOpen ? "Close Search" : "Open Search"}
+          >
+            {searchOpen ? null : <Search size={18} />}
+          </button>
 
           {/* Theme Toggle */}
           <button onClick={toggleDarkMode} className="theme-toggle">
@@ -218,7 +260,6 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
                   Profile
                 </Link>
                 <button className="profile-item logout" onClick={() => {
-                  // Add your logout logic here
                   console.log('Logging out...');
                 }}>
                   <LogOut size={16} />
@@ -228,16 +269,11 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
             )}
           </div>
 
-          {/* Mobile Toggle */}
+          {/* Mobile Menu Toggle - শুধু navbar menu এর জন্য */}
           <button
-            onClick={() => {
-              if (isMobile) {
-                setSidebarOpen(!sidebarOpen);
-              } else {
-                setMobileOpen(!mobileOpen);
-              }
-            }}
-            className="mobile-btn"
+            onClick={() => setMobileOpen(!mobileOpen)}
+            className="mobile-menu-toggle"
+            title="Toggle Menu"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -247,14 +283,6 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
       {/* Mobile Menu */}
       {mobileOpen && (
         <div className="mobile-menu">
-          {/* Mobile Search */}
-          <div className="mobile-search">
-            <div className="mobile-search-container">
-              <Search className="search-icon" size={16} />
-              <input type="text" placeholder="Search..." className="search-input" />
-            </div>
-          </div>
-
           {/* Mobile Nav Items */}
           {navItems.map((item) => (
             <div key={item.name} className="mobile-nav-item">
@@ -277,7 +305,7 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
                           key={subItem.name}
                           to={subItem.href}
                           className="mobile-dropdown-item"
-                          onClick={handleLinkClick}
+                          onClick={() => handleLinkClick(subItem.href)}
                         >
                           {subItem.name}
                         </Link>
@@ -289,7 +317,7 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
                 <Link
                   to={item.href}
                   className={`mobile-nav-link ${item.active ? 'active' : ''}`}
-                  onClick={handleLinkClick}
+                  onClick={() => handleLinkClick(item.href)}
                 >
                   <item.icon size={18} />
                   {item.name}

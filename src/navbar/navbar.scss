@@ -5,7 +5,9 @@ $gray-50: #f9fafb;
 $gray-100: #f3f4f6;
 $gray-200: #e5e7eb;
 $gray-300: #d1d5db;
+$gray-400: #9ca3af;
 $gray-500: #6b7280;
+$gray-600: #4b5563;
 $gray-700: #374151;
 $gray-800: #1f2937;
 $gray-900: #111827;
@@ -37,52 +39,380 @@ $dark-border: #4b5563;
   transition: all $duration ease;
 }
 
-// Main navbar
+// Navbar
 .navbar {
   background: $white;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 50;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  border-bottom: 1px solid $gray-200;
+
+  // Main navbar container - fixed height maintain করি
+  > .sidebar-toggle-fixed {
+    top: 2rem; // Fixed position, mobile menu এর effect এ change হবে না
+  }
 }
 
+// Sidebar Toggle - Fixed Left Position এবং Responsive
+.sidebar-toggle-fixed {
+  position: fixed; // Absolute থেকে fixed করি যাতে mobile menu affect না করে
+  left: 1rem;
+  top: 2rem; // Navbar এর middle position (4rem height এর half)
+  transform: translateY(-50%);
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: $gray-500;
+  @include transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1002; // Navbar এর থেকেও বেশি z-index
+  height: 2.5rem; // Logo এর same height
+  width: 2.5rem; // Square shape
+
+  &:hover {
+    background: $gray-100;
+    color: $primary;
+    transform: translateY(-50%) scale(1.05);
+  }
+
+  &:active {
+    transform: translateY(-50%) scale(0.95);
+  }
+
+  // Tablet size এ adjust - logo size এর সাথে match
+  @media (max-width: 1024px) {
+    left: 0.75rem;
+    height: 2.25rem;
+    width: 2.25rem;
+    padding: 0.375rem;
+  }
+
+  // Mobile size এ logo এর same size
+  @media (max-width: 768px) {
+    left: 0.5rem;
+    height: 2rem; // Mobile logo height এর same
+    width: 2rem;
+    padding: 0.25rem;
+  }
+
+  // Very small mobile এ
+  @media (max-width: 480px) {
+    left: 0.25rem;
+    height: 2rem;
+    width: 2rem;
+    padding: 0.25rem;
+  }
+}
+
+// Mobile Menu Toggle Button - শুধু navbar menu এর জন্য
+.mobile-menu-toggle {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: $gray-500;
+  @include transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    background: rgba($primary, 0.1);
+    color: $primary;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (min-width: 1200px) {
+    display: none; // Large screen এ hide
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.375rem;
+  }
+}
+
+// Mobile Menu - Fixed positioning যাতে main navbar affect না করে
+.mobile-menu {
+  background: $white;
+  border-top: 1px solid $gray-200;
+  padding: 1rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: absolute; // Fixed positioning
+  top: 100%; // Navbar এর নিচে
+  left: 0;
+  right: 0;
+  z-index: 1000; // Navbar এর নিচে কিন্তু content এর উপরে
+
+  @media (min-width: 1200px) {
+    display: none;
+  }
+
+  .mobile-nav-item {
+    margin-bottom: 0.5rem;
+  }
+
+  .mobile-nav-link {
+    @include flex-between;
+    width: 100%;
+    padding: 0.75rem;
+    background: none;
+    border: none;
+    border-radius: 0.75rem;
+    color: $gray-600;
+    text-decoration: none;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background: rgba($primary, 0.1);
+      color: $primary;
+    }
+
+    &.active {
+      background: rgba($primary, 0.1);
+      color: $primary;
+      font-weight: 600;
+    }
+
+    .mobile-nav-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+  }
+
+  .mobile-dropdown {
+    margin-left: 2rem;
+    margin-top: 0.5rem;
+
+    .mobile-dropdown-item {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      color: $gray-500;
+      text-decoration: none;
+      border-radius: 0.5rem;
+      margin-bottom: 0.25rem;
+      @include transition;
+
+      &:hover {
+        background: rgba($primary, 0.1);
+        color: $primary;
+      }
+
+      &.active {
+        background: rgba($primary, 0.1);
+        color: $primary;
+        font-weight: 600;
+      }
+    }
+  }
+}
+
+// Container - Responsive padding for sidebar button
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1rem;
-  @include flex-between;
+  padding: 0 1rem 0 4.5rem; // Sidebar button + logo এর জন্য বেশি space
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   height: 4rem;
+  gap: 1rem;
+
+  // Tablet size এ padding adjust
+  @media (max-width: 1024px) {
+    padding: 0 0.75rem 0 4rem;
+  }
+
+  // Mobile size এ padding adjust
+  @media (max-width: 768px) {
+    padding: 0 0.5rem 0 3.5rem;
+    gap: 0.5rem;
+  }
+
+  // Very small mobile এ
+  @media (max-width: 480px) {
+    padding: 0 0.25rem 0 3rem;
+    gap: 0.25rem;
+  }
 }
 
-// Brand section
+// Brand section - Logo alignment ensure করি
 .brand {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  height: 2.5rem; // Fixed height for alignment
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    height: 100%; // Full height
+  }
 
   .logo {
-    width: 2rem;
-    height: 2rem;
-    background: linear-gradient(45deg, $primary, #8b5cf6);
-    border-radius: 0.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, $primary, #8b5cf6);
+    border-radius: 0.75rem;
     @include flex-center;
     color: $white;
     font-weight: bold;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    flex-shrink: 0; // Logo size fixed রাখি
+
+    @media (max-width: 768px) {
+      width: 2rem;
+      height: 2rem;
+      font-size: 1rem;
+    }
   }
 
   .brand-text {
     font-weight: bold;
     font-size: 1.25rem;
     color: $gray-900;
+    background: linear-gradient(135deg, $primary, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    white-space: nowrap; // Text wrap prevent করি
+
+    @media (max-width: 640px) {
+      display: none;
+    }
+  }
+
+  // Brand container height mobile এ adjust
+  @media (max-width: 768px) {
+    height: 2rem;
+  }
+}
+
+// Search Expanded Section
+.search-expanded {
+  display: flex;
+  gap: 0.25rem;
+  flex: 1;
+  justify-content: center;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .search-input-container {
+    position: relative;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: $white;
+    border: 2px solid $primary;
+    border-radius: 2rem;
+    box-shadow: 0 4px 20px rgba(59, 130, 246, 0.15);
+    overflow: hidden;
+    @include transition;
+
+    &:hover {
+      box-shadow: 0 4px 24px rgba(59, 130, 246, 0.2);
+    }
+
+    .search-input-expanded {
+      flex: 1;
+      padding: 0.75rem 5.5rem 0.75rem 1.25rem;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: transparent;
+      color: $gray-900;
+
+      &::placeholder {
+        color: $gray-400;
+        font-weight: 400;
+      }
+    }
+
+    .search-submit-btn {
+      position: absolute;
+      right: calc(2.5rem + 20px);
+      padding: 0.5rem;
+      background: rgba($primary, 0.1);
+      border: none;
+      cursor: pointer;
+      @include transition;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: $primary;
+      width: 2rem;
+      height: 2rem;
+
+      &:hover {
+        background: $primary;
+        color: $white;
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    .search-close-btn {
+      position: absolute;
+      right: 0.75rem;
+      padding: 0.5rem;
+      background: rgba($red, 0.1);
+      border: none;
+      cursor: pointer;
+      @include transition;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      color: $red;
+      width: 2rem;
+      height: 2rem;
+
+      &:hover {
+        background: $red;
+        color: $white;
+        transform: scale(1.1);
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+
+    &:focus-within {
+      box-shadow: 0 4px 28px rgba(59, 130, 246, 0.3);
+      border-color: darken($primary, 10%);
+    }
   }
 }
 
 // Desktop navigation
 .nav-menu {
   display: none;
-  gap: 0.5rem;
+  gap: 0.25rem;
+  flex: 1;
+  justify-content: center;
 
-  @media (min-width: 1024px) {
+  @media (min-width: 1200px) {
     display: flex;
   }
 }
@@ -111,7 +441,7 @@ $dark-border: #4b5563;
   align-items: center;
   gap: 0.25rem;
   padding: 0.75rem 0.5rem;
-  border-radius: 0.5rem;
+  border-radius: 0.75rem;
   font-size: 0.75rem;
   color: $gray-500;
   text-decoration: none;
@@ -122,15 +452,15 @@ $dark-border: #4b5563;
   @include transition;
 
   &:hover {
-    background: $gray-100;
+    background: rgba($primary, 0.1);
     color: $primary;
     transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
   }
 
   &.active,
   &.dropdown-open {
-    background: $primary-light;
+    background: linear-gradient(135deg, rgba($primary, 0.1), rgba(139, 92, 246, 0.1));
     color: $primary;
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);
@@ -147,27 +477,248 @@ $dark-border: #4b5563;
   }
 }
 
+// Actions section styling
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  @media (max-width: 768px) {
+    gap: 0.25rem;
+  }
+}
+
+// Search toggle button
+.search-toggle {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: $gray-500;
+  @include transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &:hover {
+    background: rgba($primary, 0.1);
+    color: $primary;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.375rem;
+  }
+}
+
+// Theme toggle, notifications styling
+.theme-toggle,
+.notification {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: $gray-500;
+  @include transition;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+
+  &:hover {
+    background: rgba($primary, 0.1);
+    color: $primary;
+    transform: scale(1.05);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+
+  @media (max-width: 768px) {
+    padding: 0.375rem;
+  }
+}
+
+// Notification badge
+.notification {
+  .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    width: 1.25rem;
+    height: 1.25rem;
+    background: linear-gradient(135deg, $red, #dc2626);
+    color: $white;
+    border-radius: 50%;
+    font-size: 0.75rem;
+    font-weight: 600;
+    @include flex-center;
+    border: 2px solid $white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+  }
+}
+
+// Profile section
+.profile {
+  position: relative;
+
+  .profile-btn {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    @include transition;
+
+    &:hover {
+      background: rgba($primary, 0.1);
+      transform: scale(1.02);
+    }
+  }
+
+  .avatar {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, #10b981, $primary);
+    border-radius: 50%;
+    @include flex-center;
+    color: $white;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+    border: 2px solid $white;
+  }
+
+  .profile-dropdown {
+    position: absolute;
+    right: 0;
+    top: calc(100% + 0.5rem);
+    width: 14rem;
+    background: $white;
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 1px solid $gray-200;
+    padding: 0.75rem 0;
+    z-index: 50;
+    backdrop-filter: blur(10px);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -8px;
+      right: 1rem;
+      width: 16px;
+      height: 16px;
+      background: $white;
+      border: 1px solid $gray-200;
+      border-bottom: none;
+      border-right: none;
+      transform: rotate(45deg);
+    }
+
+    .profile-info {
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid $gray-200;
+      margin-bottom: 0.5rem;
+
+      .profile-name {
+        font-weight: 600;
+        color: $gray-900;
+        margin: 0 0 0.25rem 0;
+        font-size: 0.9rem;
+      }
+
+      .profile-email {
+        font-size: 0.8rem;
+        color: $gray-500;
+        margin: 0;
+      }
+    }
+
+    .profile-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      color: $gray-600;
+      text-decoration: none;
+      font-size: 0.875rem;
+      border: none;
+      background: none;
+      width: 100%;
+      cursor: pointer;
+      text-align: left;
+      @include transition;
+
+      &:hover {
+        background: rgba($primary, 0.1);
+        color: $primary;
+        transform: translateX(4px);
+      }
+
+      &.logout {
+        color: $red-600;
+        border-top: 1px solid $gray-200;
+        margin-top: 0.5rem;
+        padding-top: 0.75rem;
+
+        &:hover {
+          background: rgba($red, 0.1);
+          color: $red;
+        }
+      }
+    }
+  }
+}
+
 // Dark mode styles
 .navbar.dark-mode {
   background: $dark-bg;
   border-bottom-color: $dark-border;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
-  .brand .brand-text {
-    color: $dark-text;
+  .sidebar-toggle-fixed {
+    color: $dark-text-secondary;
+
+    &:hover {
+      background: $dark-bg-secondary;
+      color: #60a5fa;
+    }
+  }
+
+  .brand {
+    .brand-text {
+      color: $dark-text;
+      background: linear-gradient(135deg, #60a5fa, #a78bfa);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
   }
 
   .nav-link {
     color: $dark-text-secondary;
 
     &:hover {
-      background: $dark-bg-secondary;
-      color: $primary;
+      background: rgba(96, 165, 250, 0.1);
+      color: #60a5fa;
     }
 
     &.active,
     &.dropdown-open {
-      background: rgba($primary, 0.2);
-      color: $primary;
+      background: linear-gradient(135deg, rgba(96, 165, 250, 0.1), rgba(167, 139, 250, 0.1));
+      color: #60a5fa;
     }
   }
 
@@ -175,6 +726,7 @@ $dark-border: #4b5563;
   .profile-dropdown {
     background: $dark-bg-secondary;
     border-color: $dark-border;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
 
     &::before {
       background: $dark-bg-secondary;
@@ -187,42 +739,53 @@ $dark-border: #4b5563;
     color: $dark-text-secondary;
 
     &:hover {
-      background: $dark-bg;
-      color: $primary;
+      background: rgba(96, 165, 250, 0.1);
+      color: #60a5fa;
     }
 
     &.logout:hover {
       background: rgba($red, 0.1);
+      color: #f87171;
     }
   }
 
-  .search-input {
-    background: $dark-bg-secondary;
-    border-color: $dark-border;
-    color: $dark-text;
-
-    &::placeholder {
-      color: $dark-text-secondary;
-    }
-
-    &:focus {
-      border-color: $primary;
-    }
-  }
-
+  .search-toggle,
   .notification,
-  .mobile-btn,
   .theme-toggle {
-    color: $dark-text-secondary;
+    color: $dark-text-secondary !important;
 
     &:hover {
+      background: rgba(96, 165, 250, 0.1);
+      color: #60a5fa !important;
+    }
+  }
+
+  .notification {
+    .badge {
+      border-color: $dark-bg !important;
+      background: linear-gradient(135deg, $red, #dc2626) !important;
+      color: $white !important;
+    }
+  }
+
+  .search-expanded {
+    .search-input-container {
       background: $dark-bg-secondary;
-      color: $primary;
+      border-color: #60a5fa;
+
+      .search-input-expanded {
+        background: transparent;
+        color: $dark-text;
+
+        &::placeholder {
+          color: $dark-text-secondary;
+        }
+      }
     }
   }
 
   .profile-btn:hover {
-    background: $dark-bg-secondary;
+    background: rgba(96, 165, 250, 0.1);
   }
 
   .profile-info {
@@ -237,27 +800,34 @@ $dark-border: #4b5563;
     }
   }
 
+  .avatar {
+    border-color: $dark-bg;
+  }
+
+  .sidebar-toggle-fixed {
+    color: $dark-text-secondary;
+
+    &:hover {
+      background: $dark-bg-secondary;
+      color: #60a5fa;
+    }
+  }
+
   .mobile-menu {
     background: $dark-bg;
     border-top-color: $dark-border;
-
-    .mobile-search .search-input {
-      background: $dark-bg-secondary;
-      border-color: $dark-border;
-      color: $dark-text;
-    }
 
     .mobile-nav-link {
       color: $dark-text-secondary;
 
       &:hover {
         background: $dark-bg-secondary;
-        color: $primary;
+        color: #60a5fa;
       }
 
       &.active {
-        background: rgba($primary, 0.2);
-        color: $primary;
+        background: rgba(96, 165, 250, 0.2);
+        color: #60a5fa;
       }
     }
 
@@ -266,7 +836,12 @@ $dark-border: #4b5563;
 
       &:hover {
         background: $dark-bg-secondary;
-        color: $primary;
+        color: #60a5fa;
+      }
+
+      &.active {
+        background: rgba(96, 165, 250, 0.2);
+        color: #60a5fa;
       }
     }
   }
@@ -275,16 +850,17 @@ $dark-border: #4b5563;
 // Dropdown menu
 .dropdown-menu {
   position: absolute;
-  top: calc(100% + 0.25rem);
+  top: calc(100% + 0.5rem);
   left: 50%;
   transform: translateX(-50%);
   width: 12rem;
   background: $white;
-  border-radius: 0.5rem;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   border: 1px solid $gray-200;
   padding: 0.5rem 0;
   z-index: 50;
+  backdrop-filter: blur(10px);
 
   &::before {
     content: '';
@@ -300,319 +876,27 @@ $dark-border: #4b5563;
     border-right: none;
     transform: translateX(-50%) rotate(45deg);
   }
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: -0.25rem;
-    left: 0;
-    right: 0;
-    height: 0.25rem;
-    background: transparent;
-  }
 }
 
 .dropdown-item {
   display: block;
-  padding: 0.5rem 1rem;
-  color: $gray-500;
+  padding: 0.75rem 1rem;
+  color: $gray-600;
   text-decoration: none;
   font-size: 0.875rem;
-  border-radius: 0.375rem;
+  border-radius: 0.5rem;
   margin: 0 0.25rem;
   @include transition;
 
   &:hover {
-    background: $gray-100;
+    background: rgba($primary, 0.1);
     color: $primary;
     transform: translateX(4px);
   }
-}
 
-// Actions section
-.actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-// Search
-.search {
-  display: none;
-  position: relative;
-
-  @media (min-width: 768px) {
-    display: block;
-  }
-
-  .search-icon {
-    position: absolute;
-    left: 0.75rem;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1rem;
-    height: 1rem;
-    color: #9ca3af;
-  }
-
-  .search-input {
-    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
-    width: 12rem;
-    border: 1px solid $gray-300;
-    border-radius: 0.5rem;
-    outline: none;
-    font-size: 0.875rem;
-    @include transition;
-
-    &:focus {
-      border-color: $primary;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-    }
-  }
-}
-
-// Theme toggle
-.theme-toggle {
-  padding: 0.5rem;
-  background: none;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  color: $gray-500;
-  @include transition;
-
-  &:hover {
-    background: $gray-100;
+  &.active {
+    background: rgba($primary, 0.1);
     color: $primary;
-  }
-}
-
-// Notifications
-.notification {
-  position: relative;
-  padding: 0.5rem;
-  background: none;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  color: $gray-500;
-  @include transition;
-
-  &:hover {
-    background: $gray-100;
-    color: $primary;
-  }
-
-  .badge {
-    position: absolute;
-    top: -0.25rem;
-    right: -0.25rem;
-    width: 1rem;
-    height: 1rem;
-    background: $red;
-    color: $white;
-    border-radius: 50%;
-    font-size: 0.75rem;
-    @include flex-center;
-  }
-}
-
-// Profile
-.profile {
-  position: relative;
-
-  .profile-btn {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem;
-    background: none;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    @include transition;
-
-    &:hover {
-      background: $gray-100;
-    }
-  }
-
-  .avatar {
-    width: 2rem;
-    height: 2rem;
-    background: linear-gradient(45deg, #10b981, $primary);
-    border-radius: 50%;
-    @include flex-center;
-    color: $white;
     font-weight: 600;
-    font-size: 0.875rem;
-  }
-
-  .profile-dropdown {
-    position: absolute;
-    right: 0;
-    top: 100%;
-    width: 12rem;
-    background: $white;
-    border-radius: 0.5rem;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    border: 1px solid $gray-200;
-    padding: 0.5rem 0;
-    margin-top: 0.25rem;
-    z-index: 50;
-
-    .profile-info {
-      padding: 0.5rem 1rem;
-      border-bottom: 1px solid $gray-200;
-      margin-bottom: 0.5rem;
-
-      .profile-name {
-        font-weight: 600;
-        color: $gray-900;
-        margin: 0;
-      }
-
-      .profile-email {
-        font-size: 0.75rem;
-        color: $gray-500;
-        margin: 0;
-      }
-    }
-
-    .profile-item {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1rem;
-      color: $gray-500;
-      text-decoration: none;
-      font-size: 0.875rem;
-      @include transition;
-
-      &:hover {
-        background: $gray-100;
-        color: $primary;
-      }
-
-      &.logout {
-        color: $red-600;
-        border-top: 1px solid $gray-200;
-        margin-top: 0.5rem;
-        padding-top: 0.75rem;
-      }
-    }
-  }
-}
-
-// Mobile toggle
-.mobile-btn {
-  display: block;
-  padding: 0.5rem;
-  background: none;
-  border: none;
-  color: $gray-500;
-  cursor: pointer;
-  border-radius: 0.5rem;
-  @include transition;
-
-  @media (min-width: 1024px) {
-    display: none;
-  }
-
-  &:hover {
-    background: $gray-100;
-    color: $primary;
-  }
-}
-
-// Mobile menu
-.mobile-menu {
-  background: $white;
-  border-top: 1px solid $gray-200;
-  padding: 1rem;
-
-  @media (min-width: 1024px) {
-    display: none;
-  }
-
-  .mobile-search {
-    margin-bottom: 1rem;
-
-    @media (min-width: 768px) {
-      display: none;
-    }
-
-    .mobile-search-container {
-      position: relative;
-
-      .search-icon {
-        position: absolute;
-        left: 0.75rem;
-        top: 50%;
-        transform: translateY(-50%);
-        color: #9ca3af;
-      }
-
-      .search-input {
-        width: 100%;
-        padding: 0.75rem 0.75rem 0.75rem 2.25rem;
-        border: 1px solid $gray-300;
-        border-radius: 0.5rem;
-        outline: none;
-      }
-    }
-  }
-
-  .mobile-nav-item {
-    margin-bottom: 0.5rem;
-  }
-
-  .mobile-nav-link {
-    @include flex-between;
-    width: 100%;
-    padding: 0.75rem;
-    background: none;
-    border: none;
-    border-radius: 0.5rem;
-    color: $gray-500;
-    text-decoration: none;
-    cursor: pointer;
-    @include transition;
-
-    &:hover {
-      background: $gray-100;
-      color: $primary;
-    }
-
-    &.active {
-      background: $primary-light;
-      color: $primary;
-    }
-
-    .mobile-nav-content {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-  }
-
-  .mobile-dropdown {
-    margin-left: 2rem;
-    margin-top: 0.5rem;
-
-    .mobile-dropdown-item {
-      display: block;
-      padding: 0.5rem 0.75rem;
-      color: $gray-500;
-      text-decoration: none;
-      border-radius: 0.375rem;
-      margin-bottom: 0.25rem;
-      @include transition;
-
-      &:hover {
-        background: $gray-100;
-        color: $primary;
-      }
-    }
   }
 }

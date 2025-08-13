@@ -55,7 +55,7 @@ const MainLayout = () => {
                     className={`main-content ${!isMobile && sidebarOpen ? 'with-sidebar' : ''}`}
                     style={{
                         marginLeft: !isMobile && sidebarOpen ? '280px' : '0',
-                        marginTop: '4rem', // Account for navbar height
+                        marginTop: '4rem', // Navbar fixed থাকায় space দিতে হবে
                         transition: 'margin-left 0.3s ease',
                         minHeight: 'calc(100vh - 4rem)',
                         background: t.bg,

@@ -50,44 +50,26 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
     return (
         <div style={{
             position: 'fixed',
-            left: sidebarOpen || !isMobile ? 0 : '-280px',
-            top: '4rem', // Start below navbar (navbar height is 4rem)
+            left: sidebarOpen ? 0 : '-280px',
+            top: '4rem',
             width: '280px',
-            height: 'calc(100vh - 4rem)', // Full height minus navbar
+            height: 'calc(100vh - 4rem)',
             background: t.cardBg,
             borderRight: `1px solid ${t.border}`,
             transition: 'left 0.3s ease',
-            zIndex: 999,
-            overflow: 'auto' // Allow scrolling if content is too long
+            zIndex: 1000,
+            overflow: 'auto'
         }}>
-            {/* Sidebar Header */}
+            {/* Header */}
             <div style={{
                 padding: '1rem',
-                borderBottom: `1px solid ${t.border}`,
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center'
+                borderBottom: `1px solid ${t.border}`
             }}>
-                <h2 style={{ margin: 0, color: t.text, fontSize: '1.2rem' }}>Menu</h2>
-                {isMobile && (
-                    <button
-                        onClick={() => setSidebarOpen(false)}
-                        style={{
-                            background: 'none',
-                            border: 'none',
-                            color: t.text,
-                            cursor: 'pointer',
-                            padding: '0.25rem',
-                            borderRadius: '0.25rem'
-                        }}
-                    >
-                        <X size={20} />
-                    </button>
-                )}
+                <h3 style={{ margin: 0, color: t.text }}>Menu</h3>
             </div>
 
-            {/* Navigation Menu */}
-            <nav style={{ padding: '1rem 0', flex: 1 }}>
+            {/* Menu Items */}
+            <nav style={{ padding: '1rem 0' }}>
                 {menuItems.map((item) => (
                     <div key={item.id}>
                         <button
@@ -100,40 +82,19 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                             }}
                             style={{
                                 width: '100%',
-                                background: isActiveRoute(item.path) || (item.children && isActiveParent(item.children))
-                                    ? t.primary
-                                    : 'none',
+                                background: isActiveRoute(item.path) || (item.children && isActiveParent(item.children)) ? t.primary : 'none',
                                 border: 'none',
-                                color: isActiveRoute(item.path) || (item.children && isActiveParent(item.children))
-                                    ? 'white'
-                                    : t.text,
+                                color: isActiveRoute(item.path) || (item.children && isActiveParent(item.children)) ? 'white' : t.text,
                                 padding: '0.75rem 1rem',
                                 display: 'flex',
                                 alignItems: 'center',
                                 gap: '0.75rem',
-                                cursor: 'pointer',
-                                fontSize: '0.9rem',
-                                transition: 'all 0.2s ease',
-                                textAlign: 'left'
-                            }}
-                            onMouseEnter={(e) => {
-                                if (!isActiveRoute(item.path) && !(item.children && isActiveParent(item.children))) {
-                                    e.target.style.background = t.border;
-                                }
-                            }}
-                            onMouseLeave={(e) => {
-                                if (!isActiveRoute(item.path) && !(item.children && isActiveParent(item.children))) {
-                                    e.target.style.background = 'none';
-                                }
+                                cursor: 'pointer'
                             }}
                         >
                             <item.icon size={18} />
                             <span style={{ flex: 1, textAlign: 'left' }}>{item.label}</span>
-                            {item.children && (
-                                activeAccordion === item.id ?
-                                <ChevronDown size={16} /> :
-                                <ChevronRight size={16} />
-                            )}
+                            {item.children && (activeAccordion === item.id ? <ChevronDown size={16} /> : <ChevronRight size={16} />)}
                         </button>
 
                         {/* Submenu */}
@@ -148,21 +109,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                                             background: isActiveRoute(child.path) ? t.primary : 'none',
                                             border: 'none',
                                             color: isActiveRoute(child.path) ? 'white' : t.textSec,
-                                            padding: '0.5rem 1rem 0.5rem 3rem',
+                                            padding: '0.5rem 3rem',
                                             cursor: 'pointer',
-                                            fontSize: '0.85rem',
-                                            textAlign: 'left',
-                                            transition: 'all 0.2s ease'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            if (!isActiveRoute(child.path)) {
-                                                e.target.style.background = 'rgba(0,0,0,0.1)';
-                                            }
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            if (!isActiveRoute(child.path)) {
-                                                e.target.style.background = 'none';
-                                            }
+                                            fontSize: '0.85rem'
                                         }}
                                     >
                                         {child.label}
@@ -174,11 +123,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                 ))}
             </nav>
 
-            {/* Logout Button */}
-            <div style={{
-                padding: '1rem',
-                borderTop: `1px solid ${t.border}`
-            }}>
+            {/* Logout */}
+            <div style={{ position: 'absolute', bottom: '1rem', left: '1rem', right: '1rem' }}>
                 <button
                     onClick={handleLogout}
                     style={{
@@ -192,12 +138,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen, isMobile }) => {
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        gap: '0.5rem',
-                        fontSize: '0.9rem',
-                        transition: 'opacity 0.2s ease'
+                        gap: '0.5rem'
                     }}
-                    onMouseEnter={(e) => e.target.style.opacity = '0.9'}
-                    onMouseLeave={(e) => e.target.style.opacity = '1'}
                 >
                     <LogOut size={16} /> Logout
                 </button>
