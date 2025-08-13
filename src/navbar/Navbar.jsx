@@ -135,7 +135,7 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
         className="sidebar-toggle-fixed"
         title="Toggle Sidebar"
       >
-        {sidebarOpen ? <X size={18} /> : <PanelRight size={18} />}
+        {sidebarOpen ? <PanelRight size={18} color='#3b82f6' /> : <PanelRight size={18} />}
       </button>
 
       <div className="container">

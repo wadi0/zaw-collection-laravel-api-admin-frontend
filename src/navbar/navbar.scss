@@ -165,7 +165,7 @@ $dark-border: #4b5563;
 
   .mobile-nav-link {
     @include flex-between;
-    width: 100%;
+    width: -moz-available;
     padding: 0.75rem;
     background: none;
     border: none;
@@ -222,9 +222,9 @@ $dark-border: #4b5563;
 
 // Container - Responsive padding for sidebar button
 .container {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
-  padding: 0 1rem 0 4.5rem; // Sidebar button + logo এর জন্য বেশি space
+  padding: 0 1rem; // Sidebar button + logo এর জন্য বেশি space
   display: flex;
   align-items: center;
   justify-content: space-between;
