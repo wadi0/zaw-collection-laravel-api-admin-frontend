@@ -1,3 +1,50 @@
+//.admin-layout {
+//  display: flex;
+//  flex-direction: column;
+//  min-height: 100vh;
+//}
+//
+//.layout-body {
+//  display: flex;
+//  flex: 1;
+//  position: relative;
+//}
+//
+//.main-content {
+//  flex: 1;
+//  transition: margin-left 0.3s ease;
+//  overflow-x: auto;
+//
+//  &.with-sidebar {
+//    margin-left: 280px;
+//  }
+//}
+//
+//.sidebar-overlay {
+//  position: fixed;
+//  background-color: rgba(0, 0, 0, 0.5);
+//  z-index: 998;
+//  cursor: pointer;
+//}
+//
+//// Responsive design
+//@media (max-width: 768px) {
+//  .main-content {
+//    margin-left: 0 !important;
+//
+//    &.with-sidebar {
+//      margin-left: 0 !important;
+//    }
+//  }
+//}
+//
+//// Dark mode adjustments
+//.admin-layout.dark-mode {
+//  .main-content {
+//    background-color: #0f172a;
+//  }
+//}
+
 .admin-layout {
   display: flex;
   flex-direction: column;
@@ -10,13 +57,27 @@
   position: relative;
 }
 
-.main-content {
+// Updated content wrapper to handle footer properly
+.content-wrapper {
   flex: 1;
   transition: margin-left 0.3s ease;
   overflow-x: auto;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 4rem); // Account for navbar height
 
   &.with-sidebar {
     margin-left: 280px;
+  }
+}
+
+.main-content {
+  flex: 1 0 auto; // This makes main content grow and push footer down
+  transition: margin-left 0.3s ease;
+
+  // Remove the old margin-left styles since it's now handled by content-wrapper
+  &.with-sidebar {
+    margin-left: 0; // Reset since parent handles this now
   }
 }
 
@@ -29,6 +90,14 @@
 
 // Responsive design
 @media (max-width: 768px) {
+  .content-wrapper {
+    margin-left: 0 !important;
+
+    &.with-sidebar {
+      margin-left: 0 !important;
+    }
+  }
+
   .main-content {
     margin-left: 0 !important;
 
@@ -41,6 +110,10 @@
 // Dark mode adjustments
 .admin-layout.dark-mode {
   .main-content {
+    background-color: #0f172a;
+  }
+
+  .content-wrapper {
     background-color: #0f172a;
   }
 }

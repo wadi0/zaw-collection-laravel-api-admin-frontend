@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from "../navbar/Navbar.jsx";
-import Sidebar from "../sidebar/Sidebar.jsx"; // ✅ Correct import - your custom Sidebar component
+import Sidebar from "../sidebar/Sidebar.jsx";
+import Footer from "../footer/Footer.jsx"; // ✅ Import the new Footer component
 import { useApp } from "../context/AppContext.jsx";
-import './mainLayout.scss'; // Add CSS file for styling
+import './mainLayout.scss';
 
 const MainLayout = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -50,20 +51,36 @@ const MainLayout = () => {
                     isMobile={isMobile}
                 />
 
-                {/* Main content area */}
-                <main
-                    className={`main-content ${!isMobile && sidebarOpen ? 'with-sidebar' : ''}`}
+                {/* Main content area with footer */}
+                <div
+                    className={`content-wrapper ${!isMobile && sidebarOpen ? 'with-sidebar' : ''}`}
                     style={{
                         marginLeft: !isMobile && sidebarOpen ? '280px' : '0',
                         marginTop: '4rem', // Navbar fixed থাকায় space দিতে হবে
                         transition: 'margin-left 0.3s ease',
                         minHeight: 'calc(100vh - 4rem)',
-                        background: t.bg,
-                        padding: '2rem'
+                        display: 'flex',
+                        flexDirection: 'column'
                     }}
                 >
-                    <Outlet />
-                </main>
+                    {/* Main content */}
+                    <main
+                        className="main-content"
+                        style={{
+                            background: t.bg,
+                            padding: '2rem',
+                            flex: '1 0 auto' // This ensures footer stays at bottom
+                        }}
+                    >
+                        <Outlet />
+                    </main>
+
+                    {/* Footer */}
+                    <Footer
+                        sidebarOpen={sidebarOpen}
+                        isMobile={isMobile}
+                    />
+                </div>
             </div>
 
             {/* Mobile sidebar overlay */}

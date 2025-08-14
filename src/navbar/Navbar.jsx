@@ -247,7 +247,7 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
           <div className="profile">
             <button onClick={() => setProfile(!profile)} className="profile-btn">
               <div className="avatar">JD</div>
-              <ChevronDown size={16} />
+              {/*<ChevronDown size={16} color='#9ca3af' />*/}
             </button>
             {profile && (
               <div className="profile-dropdown">
