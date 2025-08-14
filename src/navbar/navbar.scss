@@ -49,41 +49,36 @@ $dark-border: #4b5563;
   right: 0;
   z-index: 1001;
   border-bottom: 1px solid $gray-200;
-
-  // Main navbar container - fixed height maintain করি
-  > .sidebar-toggle-fixed {
-    top: 2rem; // Fixed position, mobile menu এর effect এ change হবে না
-  }
 }
 
 // Sidebar Toggle - Fixed Left Position এবং Responsive
 .sidebar-toggle-fixed {
-  position: fixed; // Absolute থেকে fixed করি যাতে mobile menu affect না করে
-  left: 1rem;
-  top: 2rem; // Navbar এর middle position (4rem height এর half)
-  transform: translateY(-50%);
-  padding: 0.5rem;
-  background: none;
-  border: none;
-  border-radius: 0.5rem;
-  cursor: pointer;
-  color: $gray-500;
-  @include transition;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1002; // Navbar এর থেকেও বেশি z-index
-  height: 2.5rem; // Logo এর same height
-  width: 2.5rem; // Square shape
+  //position: fixed; // Absolute থেকে fixed করি যাতে mobile menu affect না করে
+  //left: 1rem;
+  //top: 2rem; // Navbar এর middle position (4rem height এর half)
+  //transform: translateY(-50%);
+  //padding: 0.5rem;
+  //background: none;
+  //border: none;
+  //border-radius: 0.5rem;
+  //cursor: pointer;
+  //color: $gray-500;
+  //@include transition;
+  //display: flex;
+  //align-items: center;
+  //justify-content: center;
+  //z-index: 1002; // Navbar এর থেকেও বেশি z-index
+  //height: 2.5rem; // Logo এর same height
+  //width: 2.5rem; // Square shape
 
   &:hover {
-    background: $gray-100;
-    color: $primary;
-    transform: translateY(-50%) scale(1.05);
+    //background: $gray-100;
+    //color: $primary;
+    //transform: translateY(-50%) scale(1.05);
   }
 
   &:active {
-    transform: translateY(-50%) scale(0.95);
+    //transform: translateY(-50%) scale(0.95);
   }
 
   // Tablet size এ adjust - logo size এর সাথে match
@@ -689,11 +684,11 @@ $dark-border: #4b5563;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 
   .sidebar-toggle-fixed {
-    color: $dark-text-secondary;
+    //color: $dark-text-secondary;
 
     &:hover {
-      background: $dark-bg-secondary;
-      color: #60a5fa;
+      //background: $dark-bg-secondary;
+      //color: #60a5fa;
     }
   }
 
@@ -805,7 +800,7 @@ $dark-border: #4b5563;
   }
 
   .sidebar-toggle-fixed {
-    color: $dark-text-secondary;
+    //color: $dark-text-secondary;
 
     &:hover {
       background: $dark-bg-secondary;

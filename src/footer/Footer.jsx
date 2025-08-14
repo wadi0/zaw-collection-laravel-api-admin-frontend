@@ -53,9 +53,9 @@ const Footer = ({ sidebarOpen, isMobile }) => {
   ];
 
   return (
-    <footer className={`admin-footer ${isDarkMode ? 'dark-mode' : ''} ${!isMobile && sidebarOpen ? 'with-sidebar' : ''}`}>
+    <footer className={`admin-footer ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="footer-container">
-        {/* Main Footer Content */}
+        {/* Main Footer Content - 4 Columns */}
         <div className="footer-main">
           {/* Brand Section */}
           <div className="footer-brand">
@@ -143,8 +143,10 @@ const Footer = ({ sidebarOpen, isMobile }) => {
               ))}
             </ul>
           </div>
+        </div>
 
-          {/* Newsletter Signup */}
+        {/* Newsletter Section - Separate Centered Row */}
+        <div className="footer-newsletter-section">
           <div className="footer-newsletter">
             <h3>Stay Updated</h3>
             <p>Subscribe to get the latest updates and feature announcements.</p>

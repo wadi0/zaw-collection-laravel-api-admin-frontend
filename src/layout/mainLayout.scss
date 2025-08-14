@@ -1,119 +1,202 @@
-//.admin-layout {
-//  display: flex;
-//  flex-direction: column;
-//  min-height: 100vh;
-//}
-//
-//.layout-body {
-//  display: flex;
-//  flex: 1;
-//  position: relative;
-//}
-//
-//.main-content {
-//  flex: 1;
-//  transition: margin-left 0.3s ease;
-//  overflow-x: auto;
-//
-//  &.with-sidebar {
-//    margin-left: 280px;
-//  }
-//}
-//
-//.sidebar-overlay {
-//  position: fixed;
-//  background-color: rgba(0, 0, 0, 0.5);
-//  z-index: 998;
-//  cursor: pointer;
-//}
-//
-//// Responsive design
-//@media (max-width: 768px) {
-//  .main-content {
-//    margin-left: 0 !important;
-//
-//    &.with-sidebar {
-//      margin-left: 0 !important;
-//    }
-//  }
-//}
-//
-//// Dark mode adjustments
-//.admin-layout.dark-mode {
-//  .main-content {
-//    background-color: #0f172a;
-//  }
-//}
+// Variables
+$navbar-height: 4rem;
+$sidebar-width: 280px;
+$footer-height: auto; // Footer height will be auto
+$transition-duration: 0.3s;
 
+// Reset & prevent horizontal scroll
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+// Main Layout - Flexbox structure
 .admin-layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-.layout-body {
+// Navbar section - Fixed at top
+.navbar-section {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $navbar-height;
+  z-index: 1001;
+}
+
+// Main wrapper - Contains middle section and footer
+.main-wrapper {
   display: flex;
+  flex-direction: column;
   flex: 1;
+  margin-top: $navbar-height; // Space for fixed navbar
+}
+
+// Middle section - Sidebar + Content (Flexible height)
+.middle-section {
+  display: flex;
+  flex: 1; // Take remaining space
+  min-height: calc(100vh - #{$navbar-height}); // Minimum height
   position: relative;
 }
 
-// Updated content wrapper to handle footer properly
-.content-wrapper {
+// Sidebar area - Normal flow, not overlay
+.sidebar-area {
+  width: $sidebar-width;
+  flex-shrink: 0;
+  transition: all $transition-duration ease;
+
+  // When sidebar is closed - hide it completely
+  &.sidebar-closed {
+    width: 0;
+    overflow: hidden;
+  }
+
+  // On mobile, sidebar should be overlay to save space
+  @media (max-width: 768px) {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    z-index: 1000;
+
+    &.sidebar-closed {
+      width: $sidebar-width;
+      margin-left: -$sidebar-width;
+    }
+  }
+}
+
+// Content area - Takes remaining space
+.content-area-wrapper {
   flex: 1;
-  transition: margin-left 0.3s ease;
-  overflow-x: auto;
   display: flex;
   flex-direction: column;
-  min-height: calc(100vh - 4rem); // Account for navbar height
+  min-height: 100%;
+  transition: all $transition-duration ease;
 
-  &.with-sidebar {
-    margin-left: 280px;
-  }
+  // No margin adjustment needed as sidebar width changes
 }
 
+// Main Content
 .main-content {
-  flex: 1 0 auto; // This makes main content grow and push footer down
-  transition: margin-left 0.3s ease;
+  flex: 1;
+  width: 100%;
+  overflow-x: hidden;
+}
 
-  // Remove the old margin-left styles since it's now handled by content-wrapper
-  &.with-sidebar {
-    margin-left: 0; // Reset since parent handles this now
+.content-area {
+  // Exact navbar container replication for alignment
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: calc(100vh - #{$navbar-height} - 200px); // Account for navbar and footer
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+
+  // Responsive padding - exact match with navbar structure
+  @media (max-width: 1024px) {
+    padding: 2rem 0.75rem 2rem 1rem;
+  }
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 0.5rem 1.5rem 1rem;
+  }
+
+  @media (max-width: 480px) {
+    padding: 1rem 0.25rem 1rem 0.75rem;
   }
 }
 
-.sidebar-overlay {
+// Footer section - Full width, outside the middle section
+.footer-section {
+  width: 100%;
+  margin-top: auto; // Push to bottom
+  position: relative;
+  z-index: 999;
+  // Footer should always be full width, not affected by sidebar
+}
+
+// Mobile Overlay
+.mobile-overlay {
   position: fixed;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 998;
+  top: $navbar-height;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
   cursor: pointer;
-}
 
-// Responsive design
-@media (max-width: 768px) {
-  .content-wrapper {
-    margin-left: 0 !important;
-
-    &.with-sidebar {
-      margin-left: 0 !important;
-    }
-  }
-
-  .main-content {
-    margin-left: 0 !important;
-
-    &.with-sidebar {
-      margin-left: 0 !important;
-    }
+  @media (min-width: 769px) {
+    display: none;
   }
 }
 
-// Dark mode adjustments
+// Handle wide content elements
+.content-area {
+  // Tables
+  table {
+    width: 100%;
+    max-width: 100%;
+    table-layout: fixed;
+    word-wrap: break-word;
+  }
+
+  // Images
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  // Code blocks
+  pre, code {
+    max-width: 100%;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+
+  // Any other wide elements
+  * {
+    max-width: 100%;
+  }
+}
+
+// Dark mode
 .admin-layout.dark-mode {
   .main-content {
     background-color: #0f172a;
   }
+}
 
-  .content-wrapper {
-    background-color: #0f172a;
+// Print
+@media print {
+  .middle-section {
+    margin-top: 0;
+  }
+
+  .sidebar-area {
+    display: none;
+  }
+
+  .content-area {
+    padding: 1rem;
+    min-height: auto;
+  }
+
+  .footer-section {
+    position: static;
   }
 }

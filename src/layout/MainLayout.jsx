@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from "../navbar/Navbar.jsx";
 import Sidebar from "../sidebar/Sidebar.jsx";
-import Footer from "../footer/Footer.jsx"; // ✅ Import the new Footer component
+import Footer from "../footer/Footer.jsx";
 import { useApp } from "../context/AppContext.jsx";
 import './mainLayout.scss';
 
@@ -15,10 +15,11 @@ const MainLayout = () => {
 
     useEffect(() => {
         const checkScreenSize = () => {
-            setIsMobile(window.innerWidth <= 768);
+            const mobile = window.innerWidth <= 768;
+            setIsMobile(mobile);
 
-            // Auto open sidebar on desktop
-            if (window.innerWidth > 768) {
+            // Auto open sidebar on desktop, close on mobile
+            if (!mobile) {
                 setSidebarOpen(true);
             } else {
                 setSidebarOpen(false);
@@ -30,73 +31,54 @@ const MainLayout = () => {
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
-    // Debug logs
-    console.log('MainLayout - sidebarOpen:', sidebarOpen);
-    console.log('MainLayout - isMobile:', isMobile);
-
     return (
         <div className={`admin-layout ${isDarkMode ? 'dark-mode' : ''}`}>
-            {/* Navbar at the top */}
-            <Navbar
-                setSidebarOpen={setSidebarOpen}
-                sidebarOpen={sidebarOpen}
-                isMobile={isMobile}
-            />
-
-            <div className="layout-body">
-                {/* Sidebar on the left */}
-                <Sidebar
-                    sidebarOpen={sidebarOpen}
+            {/* 1. Header Section - Fixed at top */}
+            <div className="navbar-section">
+                <Navbar
                     setSidebarOpen={setSidebarOpen}
+                    sidebarOpen={sidebarOpen}
                     isMobile={isMobile}
                 />
+            </div>
 
-                {/* Main content area with footer */}
-                <div
-                    className={`content-wrapper ${!isMobile && sidebarOpen ? 'with-sidebar' : ''}`}
-                    style={{
-                        marginLeft: !isMobile && sidebarOpen ? '280px' : '0',
-                        marginTop: '4rem', // Navbar fixed থাকায় space দিতে হবে
-                        transition: 'margin-left 0.3s ease',
-                        minHeight: 'calc(100vh - 4rem)',
-                        display: 'flex',
-                        flexDirection: 'column'
-                    }}
-                >
-                    {/* Main content */}
-                    <main
-                        className="main-content"
-                        style={{
-                            background: t.bg,
-                            padding: '2rem',
-                            flex: '1 0 auto' // This ensures footer stays at bottom
-                        }}
-                    >
-                        <Outlet />
-                    </main>
+            {/* Main wrapper for middle section and footer */}
+            <div className="main-wrapper">
+                {/* 2. Middle Section - Sidebar + Content */}
+                <div className="middle-section">
+                    {/* Sidebar Area */}
+                    <div className={`sidebar-area ${!sidebarOpen ? 'sidebar-closed' : ''}`}>
+                        <Sidebar
+                            sidebarOpen={sidebarOpen}
+                            setSidebarOpen={setSidebarOpen}
+                            isMobile={isMobile}
+                        />
+                    </div>
 
-                    {/* Footer */}
+                    {/* Content Area */}
+                    <div className={`content-area-wrapper ${!sidebarOpen ? 'sidebar-closed' : ''}`}>
+                        <main className="main-content" style={{ background: t.bg }}>
+                            <div className="content-area">
+                                <Outlet />
+                            </div>
+                        </main>
+                    </div>
+                </div>
+
+                {/* 3. Footer Section - Full width below everything */}
+                <div className="footer-section">
                     <Footer
-                        sidebarOpen={sidebarOpen}
+                        sidebarOpen={sidebarOpen && !isMobile}
                         isMobile={isMobile}
                     />
                 </div>
             </div>
 
-            {/* Mobile sidebar overlay */}
+            {/* Mobile Overlay */}
             {sidebarOpen && isMobile && (
                 <div
-                    className="sidebar-overlay"
+                    className="mobile-overlay"
                     onClick={() => setSidebarOpen(false)}
-                    style={{
-                        position: 'fixed',
-                        top: '4rem', // Start below navbar
-                        left: 0,
-                        width: '100%',
-                        height: 'calc(100% - 4rem)',
-                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
-                        zIndex: 998
-                    }}
                 />
             )}
         </div>

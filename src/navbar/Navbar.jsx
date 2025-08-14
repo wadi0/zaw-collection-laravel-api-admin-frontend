@@ -130,17 +130,16 @@ const Navbar = ({ setSidebarOpen, sidebarOpen, isMobile }) => {
   return (
     <nav className={`navbar ${isDarkMode ? 'dark-mode' : ''}`}>
       {/* Sidebar Toggle - একদম left এ fixed position */}
-      <button
+      <div className="container">
+        {/* Brand - Logo center করার জন্য */}
+        <div className="brand">
+          <button
         onClick={() => setSidebarOpen(!sidebarOpen)}
         className="sidebar-toggle-fixed"
         title="Toggle Sidebar"
       >
         {sidebarOpen ? <PanelRight size={18} color='#3b82f6' /> : <PanelRight size={18} />}
       </button>
-
-      <div className="container">
-        {/* Brand - Logo center করার জন্য */}
-        <div className="brand">
           <Link to="/admin/dashboard" className="brand-link">
             <div className="logo">A</div>
             <span className="brand-text">Admin Panel</span>
