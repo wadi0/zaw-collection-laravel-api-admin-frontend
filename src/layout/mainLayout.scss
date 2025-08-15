@@ -45,24 +45,24 @@ body {
     overflow-y: auto;
 
     // Enhanced right border with gradient effect
-    &::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 2px;
-      height: 100%;
-      background: linear-gradient(180deg,
-        #3b82f6 0%,
-        #8b5cf6 25%,
-        #06b6d4 50%,
-        #10b981 75%,
-        #f59e0b 100%
-      );
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      z-index: 1;
-    }
+    //&::after {
+    //  content: '';
+    //  position: absolute;
+    //  top: 0;
+    //  right: 0;
+    //  width: 2px;
+    //  height: 100%;
+    //  background: linear-gradient(180deg,
+    //    #3b82f6 0%,
+    //    #8b5cf6 25%,
+    //    #06b6d4 50%,
+    //    #10b981 75%,
+    //    #f59e0b 100%
+    //  );
+    //  opacity: 0;
+    //  transition: opacity 0.3s ease;
+    //  z-index: 1;
+    //}
 
     &:hover::after {
       opacity: 0.3;
