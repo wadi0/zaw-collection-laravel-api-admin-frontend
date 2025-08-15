@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Heart,
@@ -10,34 +10,47 @@ import {
   Instagram,
   Linkedin,
   Github,
-  ExternalLink
+  ExternalLink,
+  Send,
+  CheckCircle,
+  ArrowUp,
+  Globe,
+  Shield,
+  Award,
+  Users,
+  Zap
 } from 'lucide-react';
 import { useApp } from "../context/AppContext.jsx";
-import './footer.scss';
+import "./footer.scss";
 
-const Footer = ({ sidebarOpen, isMobile }) => {
+const Footer = () => {
   const { isDarkMode } = useApp();
   const currentYear = new Date().getFullYear();
+  const [email, setEmail] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const quickLinks = [
-    { name: 'Dashboard', href: '/admin/dashboard' },
-    { name: 'Products', href: '/admin/products' },
-    { name: 'Orders', href: '/admin/orders' },
-    { name: 'Customers', href: '/admin/customers' },
-    { name: 'Analytics', href: '/admin/analytics/sales' },
-    { name: 'Settings', href: '/admin/settings' }
+    { name: 'Dashboard', href: '/admin/dashboard', icon: null },
+    { name: 'Products', href: '/admin/products', icon: null },
+    { name: 'Orders', href: '/admin/orders', icon: null },
+    { name: 'Customers', href: '/admin/customers', icon: null },
+    { name: 'Analytics', href: '/admin/analytics/sales', icon: null },
+    { name: 'Settings', href: '/admin/settings', icon: null }
   ];
 
   const supportLinks = [
-    { name: 'Help Center', href: '/admin/help' },
-    { name: 'Documentation', href: '/admin/docs' },
-    { name: 'API Reference', href: '/admin/api' },
-    { name: 'Contact Support', href: '/admin/support' },
-    { name: 'System Status', href: '/admin/status' },
-    { name: 'Release Notes', href: '/admin/releases' }
+    { name: 'Help Center', href: '/admin/help', external: true },
+    { name: 'Documentation', href: '/admin/docs', external: true },
+    { name: 'API Reference', href: '/admin/api', external: true },
+    { name: 'Contact Support', href: '/admin/support', external: false },
+    { name: 'System Status', href: '/admin/status', external: true },
+    { name: 'Release Notes', href: '/admin/releases', external: false }
   ];
 
-  const legalLinks = [
+  const companyLinks = [
+    { name: 'About Us', href: '/about' },
+    { name: 'Careers', href: '/careers' },
     { name: 'Privacy Policy', href: '/privacy' },
     { name: 'Terms of Service', href: '/terms' },
     { name: 'Cookie Policy', href: '/cookies' },
@@ -45,65 +58,141 @@ const Footer = ({ sidebarOpen, isMobile }) => {
   ];
 
   const socialLinks = [
-    { name: 'Twitter', icon: Twitter, href: 'https://twitter.com' },
-    { name: 'Facebook', icon: Facebook, href: 'https://facebook.com' },
-    { name: 'Instagram', icon: Instagram, href: 'https://instagram.com' },
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
-    { name: 'GitHub', icon: Github, href: 'https://github.com' }
+    {
+      name: 'Twitter',
+      icon: Twitter,
+      href: 'https://twitter.com',
+      color: '#1DA1F2'
+    },
+    {
+      name: 'Facebook',
+      icon: Facebook,
+      href: 'https://facebook.com',
+      color: '#4267B2'
+    },
+    {
+      name: 'Instagram',
+      icon: Instagram,
+      href: 'https://instagram.com',
+      color: '#E4405F'
+    },
+    {
+      name: 'LinkedIn',
+      icon: Linkedin,
+      href: 'https://linkedin.com',
+      color: '#0077B5'
+    },
+    {
+      name: 'GitHub',
+      icon: Github,
+      href: 'https://github.com',
+      color: '#333333'
+    }
   ];
 
+  const features = [
+    { icon: Shield, text: 'Security First' },
+    { icon: Zap, text: 'Lightning Fast' },
+    { icon: Users, text: '24/7 Support' },
+    { icon: Award, text: 'Award Winning' }
+  ];
+
+  const handleSubscribe = async (e) => {
+    e.preventDefault();
+    if (!email) return;
+
+    setIsLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      setIsSubscribed(true);
+      setIsLoading(false);
+      setEmail('');
+
+      // Reset after 3 seconds
+      setTimeout(() => {
+        setIsSubscribed(false);
+      }, 3000);
+    }, 1500);
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <footer className={`admin-footer ${isDarkMode ? 'dark-mode' : ''}`}>
+    <footer className={`modern-footer ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+      {/* Back to Top Button */}
+      <button className="back-to-top" onClick={scrollToTop} title="Back to Top">
+        <ArrowUp size={20} />
+      </button>
+
       <div className="footer-container">
-        {/* Main Footer Content - 4 Columns */}
+        {/* Features Banner */}
+        <div className="features-banner">
+          {features.map((feature, index) => (
+            <div key={index} className="feature-item">
+              <feature.icon size={24} />
+              <span>{feature.text}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Main Footer Content */}
         <div className="footer-main">
           {/* Brand Section */}
           <div className="footer-brand">
             <div className="footer-logo">
-              <div className="logo">A</div>
-              <span className="brand-text">Admin Panel</span>
+              <div className="logo-icon">
+                <Globe size={24} />
+              </div>
+              <div className="logo-text">
+                <span className="brand-name">AdminPro</span>
+                <span className="brand-tagline">Dashboard Excellence</span>
+              </div>
             </div>
+
             <p className="footer-description">
-              A powerful and intuitive admin dashboard for managing your business operations efficiently.
-              Built with modern technologies and best practices.
+              Empowering businesses with intelligent analytics, seamless operations,
+              and data-driven insights. Transform your workflow with our cutting-edge admin platform.
             </p>
+
+            {/* Stats */}
+            <div className="footer-stats">
+              <div className="stat-item">
+                <span className="stat-number">50K+</span>
+                <span className="stat-label">Active Users</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">99.9%</span>
+                <span className="stat-label">Uptime</span>
+              </div>
+              <div className="stat-item">
+                <span className="stat-number">24/7</span>
+                <span className="stat-label">Support</span>
+              </div>
+            </div>
 
             {/* Contact Info */}
             <div className="contact-info">
               <div className="contact-item">
                 <Mail size={16} />
-                <span>admin@yourcompany.com</span>
+                <a href="mailto:hello@adminpro.com">hello@adminpro.com</a>
               </div>
               <div className="contact-item">
                 <Phone size={16} />
-                <span>+1 (555) 123-4567</span>
+                <a href="tel:+15551234567">+1 (555) 123-4567</a>
               </div>
               <div className="contact-item">
                 <MapPin size={16} />
-                <span>123 Business St, City, ST 12345</span>
+                <span>San Francisco, CA 94105</span>
               </div>
-            </div>
-
-            {/* Social Links */}
-            <div className="social-links">
-              {socialLinks.map((social) => (
-                <a
-                  key={social.name}
-                  href={social.href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="social-link"
-                  title={social.name}
-                >
-                  <social.icon size={18} />
-                </a>
-              ))}
             </div>
           </div>
 
           {/* Quick Links */}
           <div className="footer-links">
-            <h3>Quick Links</h3>
+            <h3>Quick Access</h3>
             <ul>
               {quickLinks.map((link) => (
                 <li key={link.name}>
@@ -117,24 +206,35 @@ const Footer = ({ sidebarOpen, isMobile }) => {
 
           {/* Support Links */}
           <div className="footer-links">
-            <h3>Support</h3>
+            <h3>Resources</h3>
             <ul>
               {supportLinks.map((link) => (
                 <li key={link.name}>
-                  <Link to={link.href} className="footer-link">
-                    {link.name}
-                    <ExternalLink size={12} />
-                  </Link>
+                  {link.external ? (
+                    <a
+                      href={link.href}
+                      className="footer-link"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {link.name}
+                      <ExternalLink size={12} />
+                    </a>
+                  ) : (
+                    <Link to={link.href} className="footer-link">
+                      {link.name}
+                    </Link>
+                  )}
                 </li>
               ))}
             </ul>
           </div>
 
-          {/* Legal Links */}
+          {/* Company Links */}
           <div className="footer-links">
-            <h3>Legal</h3>
+            <h3>Company</h3>
             <ul>
-              {legalLinks.map((link) => (
+              {companyLinks.map((link) => (
                 <li key={link.name}>
                   <Link to={link.href} className="footer-link">
                     {link.name}
@@ -145,44 +245,102 @@ const Footer = ({ sidebarOpen, isMobile }) => {
           </div>
         </div>
 
-        {/* Newsletter Section - Separate Centered Row */}
-        <div className="footer-newsletter-section">
-          <div className="footer-newsletter">
-            <h3>Stay Updated</h3>
-            <p>Subscribe to get the latest updates and feature announcements.</p>
-            <div className="newsletter-form">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="newsletter-input"
-              />
-              <button className="newsletter-btn">
-                Subscribe
-              </button>
+        {/* Newsletter Section */}
+        <div className="newsletter-section">
+          <div className="newsletter-content">
+            <div className="newsletter-header">
+              <h3>Stay in the Loop</h3>
+              <p>Get the latest updates, feature releases, and exclusive insights delivered to your inbox.</p>
             </div>
-            <p className="newsletter-note">
-              We respect your privacy. Unsubscribe at any time.
-            </p>
+
+            <form className="newsletter-form" onSubmit={handleSubscribe}>
+              <div className="input-group">
+                <Mail size={18} />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email address"
+                  className="newsletter-input"
+                  required
+                  disabled={isLoading || isSubscribed}
+                />
+                <button
+                  type="submit"
+                  className={`newsletter-btn ${isLoading ? 'loading' : ''} ${isSubscribed ? 'success' : ''}`}
+                  disabled={isLoading || isSubscribed}
+                >
+                  {isSubscribed ? (
+                    <>
+                      <CheckCircle size={18} />
+                      <span>Subscribed!</span>
+                    </>
+                  ) : isLoading ? (
+                    <>
+                      <div className="loading-spinner"></div>
+                      <span>Subscribing...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Send size={18} />
+                      <span>Subscribe</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              <p className="newsletter-note">
+                <Shield size={12} />
+                We respect your privacy. Unsubscribe anytime with one click.
+              </p>
+            </form>
           </div>
         </div>
 
-        {/* Footer Bottom */}
+        {/* Social & Bottom Section */}
         <div className="footer-bottom">
-          <div className="footer-bottom-content">
-            <div className="copyright">
+          {/* Social Links */}
+          <div className="social-section">
+            <h4>Connect With Us</h4>
+            <div className="social-links">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="social-link"
+                  title={social.name}
+                  style={{ '--social-color': social.color }}
+                >
+                  <social.icon size={20} />
+                  <span>{social.name}</span>
+                </a>
+              ))}
+            </div>
+          </div>
+
+          {/* Copyright & Links */}
+          <div className="footer-copyright">
+            <div className="copyright-text">
               <p>
-                © {currentYear} Admin Panel. Made with{' '}
+                © {currentYear} AdminPro. Crafted with{' '}
                 <Heart size={16} className="heart-icon" />{' '}
-                by Your Company.
+                in San Francisco.
               </p>
             </div>
 
-            <div className="footer-bottom-links">
-              <span>Version 2.1.0</span>
-              <span>•</span>
-              <a href="/admin/changelog" className="version-link">
+            <div className="footer-meta">
+              <span className="version-info">v2.1.0</span>
+              <span className="separator">•</span>
+              <Link to="/admin/changelog" className="version-link">
                 What's New
-              </a>
+              </Link>
+              <span className="separator">•</span>
+              <Link to="/admin/status" className="status-link">
+                <div className="status-indicator"></div>
+                All Systems Operational
+              </Link>
             </div>
           </div>
         </div>

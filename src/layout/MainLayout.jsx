@@ -66,7 +66,7 @@ const MainLayout = () => {
     }, [sidebarOpen]);
 
     return (
-        <div className={`layout-container ${!sidebarOpen ? 'sidebar-collapsed' : ''} ${isDarkMode ? 'dark-mode' : ''}`}>
+        <div className={`layout-container ${!sidebarOpen ? 'sidebar-collapsed' : ''} ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
             {/* Navbar - Fixed at top */}
             <Navbar
                 onToggleSidebar={toggleSidebar}
@@ -75,21 +75,21 @@ const MainLayout = () => {
 
             {/* Layout Content */}
             <div className="layout-content">
-                {/* Sidebar */}
+                {/* Sidebar - Always first, on the left */}
                 <Sidebar
                     isVisible={sidebarOpen}
                     onClose={closeSidebar}
                 />
 
-                {/* Main Content Area */}
-                <main className="main" style={{ background: t.bg }}>
+                {/* Main Content Area - Always second, after sidebar */}
+                <main className="main">
                     <div className="content-area">
                         <Outlet />
                     </div>
                 </main>
             </div>
 
-            {/* Footer */}
+            {/* Modern Footer */}
             <Footer />
 
             {/* Mobile Overlay */}
