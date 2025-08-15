@@ -1,202 +1,212 @@
-// Variables
-$navbar-height: 4rem;
-$sidebar-width: 280px;
-$footer-height: auto; // Footer height will be auto
-$transition-duration: 0.3s;
-
-// Reset & prevent horizontal scroll
+// Global Reset
 * {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 
-html, body {
-  overflow-x: hidden;
-  margin: 0;
-  padding: 0;
-  height: 100%;
-}
-
-// Main Layout - Flexbox structure
-.admin-layout {
-  display: flex;
-  flex-direction: column;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f5f5;
+  color: #333;
   min-height: 100vh;
+  width: 100%;
   overflow-x: hidden;
 }
 
-// Navbar section - Fixed at top
-.navbar-section {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: $navbar-height;
-  z-index: 1001;
-}
+// Layout Container
+.layout-container {
+  display: grid;
+  grid-template-areas:
+    "content"
+    "footer";
+  grid-template-rows: 1fr 80px;
+  min-height: 100vh;
+  width: 100%;
+  background: white;
+  backdrop-filter: none;
+  overflow: hidden;
+  padding-top: 70px;
+  transition: grid-template-columns 0.3s ease;
 
-// Main wrapper - Contains middle section and footer
-.main-wrapper {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-  margin-top: $navbar-height; // Space for fixed navbar
-}
-
-// Middle section - Sidebar + Content (Flexible height)
-.middle-section {
-  display: flex;
-  flex: 1; // Take remaining space
-  min-height: calc(100vh - #{$navbar-height}); // Minimum height
-  position: relative;
-}
-
-// Sidebar area - Normal flow, not overlay
-.sidebar-area {
-  width: $sidebar-width;
-  flex-shrink: 0;
-  transition: all $transition-duration ease;
-
-  // When sidebar is closed - hide it completely
-  &.sidebar-closed {
-    width: 0;
-    overflow: hidden;
+  .layout-content {
+    grid-area: content;
+    display: grid;
+    grid-template-areas: "sidebar main";
+    grid-template-columns: 280px 1fr;
+    transition: grid-template-columns 0.3s ease;
   }
 
-  // On mobile, sidebar should be overlay to save space
-  @media (max-width: 768px) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    z-index: 1000;
+  &.sidebar-collapsed {
+    .layout-content {
+      grid-template-columns: 0 1fr;
+    }
+  }
 
-    &.sidebar-closed {
-      width: $sidebar-width;
-      margin-left: -$sidebar-width;
+  // Dark mode support
+  &.dark-mode {
+    background: rgba(26, 26, 46, 0.95);
+    color: #fff;
+
+    .main {
+      background: #1a1a2e !important;
+      color: #fff;
     }
   }
 }
 
-// Content area - Takes remaining space
-.content-area-wrapper {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  transition: all $transition-duration ease;
-
-  // No margin adjustment needed as sidebar width changes
-}
-
-// Main Content
-.main-content {
-  flex: 1;
-  width: 100%;
-  overflow-x: hidden;
-}
-
-.content-area {
-  // Exact navbar container replication for alignment
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  min-height: calc(100vh - #{$navbar-height} - 200px); // Account for navbar and footer
-  width: 100%;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-
-  // Responsive padding - exact match with navbar structure
-  @media (max-width: 1024px) {
-    padding: 2rem 0.75rem 2rem 1rem;
-  }
-
-  @media (max-width: 768px) {
-    padding: 1.5rem 0.5rem 1.5rem 1rem;
-  }
-
-  @media (max-width: 480px) {
-    padding: 1rem 0.25rem 1rem 0.75rem;
-  }
-}
-
-// Footer section - Full width, outside the middle section
-.footer-section {
-  width: 100%;
-  margin-top: auto; // Push to bottom
+// Main Content Area
+.main {
+  grid-area: main;
+  padding: 40px;
+  background: white;
   position: relative;
-  z-index: 999;
-  // Footer should always be full width, not affected by sidebar
+  overflow-y: auto;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #667eea, #764ba2);
+    background-size: 200% 100%;
+    animation: gradient 3s ease infinite;
+  }
+
+  .content-area {
+    min-height: 100%;
+  }
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 10px;
+
+    &:hover {
+      background: linear-gradient(45deg, #764ba2, #667eea);
+    }
+  }
 }
 
-// Mobile Overlay
-.mobile-overlay {
+// Sidebar overlay for mobile
+.sidebar-overlay {
   position: fixed;
-  top: $navbar-height;
+  top: 70px;
   left: 0;
   right: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
-  z-index: 999;
-  cursor: pointer;
+  z-index: 998;
+  backdrop-filter: blur(5px);
+  transition: opacity 0.3s ease;
 
-  @media (min-width: 769px) {
-    display: none;
+  &:hover {
+    cursor: pointer;
   }
 }
 
-// Handle wide content elements
-.content-area {
-  // Tables
-  table {
-    width: 100%;
-    max-width: 100%;
-    table-layout: fixed;
-    word-wrap: break-word;
+// Animations
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+// Responsive Design
+@media (max-width: 768px) {
+  .layout-container {
+    .layout-content {
+      grid-template-areas: "main";
+      grid-template-columns: 1fr;
+    }
+
+    &.sidebar-collapsed {
+      .layout-content {
+        grid-template-columns: 1fr;
+      }
+    }
   }
 
-  // Images
-  img {
-    max-width: 100%;
-    height: auto;
-  }
-
-  // Code blocks
-  pre, code {
-    max-width: 100%;
-    overflow-x: auto;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-
-  // Any other wide elements
-  * {
-    max-width: 100%;
+  .main {
+    padding: 20px;
   }
 }
 
-// Dark mode
-.admin-layout.dark-mode {
-  .main-content {
-    background-color: #0f172a;
+@media (max-width: 480px) {
+  .layout-container {
+    padding-top: 60px; // Smaller navbar height on mobile
+  }
+
+  .main {
+    padding: 15px;
   }
 }
 
-// Print
+@media (max-width: 360px) {
+  .main {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 320px) {
+  .layout-container {
+    padding-top: 55px; // Even smaller navbar
+  }
+
+  .main {
+    padding: 10px;
+  }
+}
+
+@media (max-width: 280px) {
+  .layout-container {
+    padding-top: 50px; // Ultra small navbar
+  }
+
+  .main {
+    padding: 8px;
+  }
+}
+
+// Smooth scrolling for the entire page
+html {
+  scroll-behavior: smooth;
+}
+
+// Focus styles for accessibility
+button:focus,
+a:focus {
+  outline: 2px solid #667eea;
+  outline-offset: 2px;
+}
+
+// Print styles
 @media print {
-  .middle-section {
-    margin-top: 0;
+  .layout-container {
+    box-shadow: none;
+    border-radius: 0;
+    background: white;
   }
 
-  .sidebar-area {
+  .navbar,
+  .sidebar,
+  .footer {
     display: none;
   }
 
-  .content-area {
-    padding: 1rem;
-    min-height: auto;
-  }
-
-  .footer-section {
-    position: static;
+  .layout-content {
+    grid-template-areas: "main";
+    grid-template-columns: 1fr;
   }
 }

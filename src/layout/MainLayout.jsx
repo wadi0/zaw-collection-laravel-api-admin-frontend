@@ -7,7 +7,7 @@ import { useApp } from "../context/AppContext.jsx";
 import './mainLayout.scss';
 
 const MainLayout = () => {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
     const [isMobile, setIsMobile] = useState(false);
     const { isDarkMode, theme } = useApp();
 
@@ -18,11 +18,11 @@ const MainLayout = () => {
             const mobile = window.innerWidth <= 768;
             setIsMobile(mobile);
 
-            // Auto open sidebar on desktop, close on mobile
-            if (!mobile) {
-                setSidebarOpen(true);
-            } else {
+            // Auto close sidebar on mobile by default
+            if (mobile) {
                 setSidebarOpen(false);
+            } else {
+                setSidebarOpen(true);
             }
         };
 
@@ -31,55 +31,70 @@ const MainLayout = () => {
         return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
 
+    const toggleSidebar = () => {
+        setSidebarOpen(!sidebarOpen);
+    };
+
+    const closeSidebar = () => {
+        setSidebarOpen(false);
+    };
+
+    // Handle clicking outside sidebar on mobile
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (isMobile && sidebarOpen &&
+                !e.target.closest('.sidebar') &&
+                !e.target.closest('.sidebar-toggle')) {
+                closeSidebar();
+            }
+        };
+
+        document.addEventListener('click', handleClickOutside);
+        return () => document.removeEventListener('click', handleClickOutside);
+    }, [isMobile, sidebarOpen]);
+
+    // Handle escape key to close sidebar
+    useEffect(() => {
+        const handleEscapeKey = (e) => {
+            if (e.key === 'Escape' && sidebarOpen) {
+                closeSidebar();
+            }
+        };
+
+        document.addEventListener('keydown', handleEscapeKey);
+        return () => document.removeEventListener('keydown', handleEscapeKey);
+    }, [sidebarOpen]);
+
     return (
-        <div className={`admin-layout ${isDarkMode ? 'dark-mode' : ''}`}>
-            {/* 1. Header Section - Fixed at top */}
-            <div className="navbar-section">
-                <Navbar
-                    setSidebarOpen={setSidebarOpen}
-                    sidebarOpen={sidebarOpen}
-                    isMobile={isMobile}
+        <div className={`layout-container ${!sidebarOpen ? 'sidebar-collapsed' : ''} ${isDarkMode ? 'dark-mode' : ''}`}>
+            {/* Navbar - Fixed at top */}
+            <Navbar
+                onToggleSidebar={toggleSidebar}
+                sidebarVisible={sidebarOpen}
+            />
+
+            {/* Layout Content */}
+            <div className="layout-content">
+                {/* Sidebar */}
+                <Sidebar
+                    isVisible={sidebarOpen}
+                    onClose={closeSidebar}
                 />
+
+                {/* Main Content Area */}
+                <main className="main" style={{ background: t.bg }}>
+                    <div className="content-area">
+                        <Outlet />
+                    </div>
+                </main>
             </div>
 
-            {/* Main wrapper for middle section and footer */}
-            <div className="main-wrapper">
-                {/* 2. Middle Section - Sidebar + Content */}
-                <div className="middle-section">
-                    {/* Sidebar Area */}
-                    <div className={`sidebar-area ${!sidebarOpen ? 'sidebar-closed' : ''}`}>
-                        <Sidebar
-                            sidebarOpen={sidebarOpen}
-                            setSidebarOpen={setSidebarOpen}
-                            isMobile={isMobile}
-                        />
-                    </div>
-
-                    {/* Content Area */}
-                    <div className={`content-area-wrapper ${!sidebarOpen ? 'sidebar-closed' : ''}`}>
-                        <main className="main-content" style={{ background: t.bg }}>
-                            <div className="content-area">
-                                <Outlet />
-                            </div>
-                        </main>
-                    </div>
-                </div>
-
-                {/* 3. Footer Section - Full width below everything */}
-                <div className="footer-section">
-                    <Footer
-                        sidebarOpen={sidebarOpen && !isMobile}
-                        isMobile={isMobile}
-                    />
-                </div>
-            </div>
+            {/* Footer */}
+            <Footer />
 
             {/* Mobile Overlay */}
-            {sidebarOpen && isMobile && (
-                <div
-                    className="mobile-overlay"
-                    onClick={() => setSidebarOpen(false)}
-                />
+            {isMobile && sidebarOpen && (
+                <div className="sidebar-overlay" onClick={closeSidebar}></div>
             )}
         </div>
     );
