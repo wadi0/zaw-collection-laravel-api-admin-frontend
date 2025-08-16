@@ -1,8 +1,27 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { X } from "lucide-react";
-import {useApp} from "../../context/AppContext.jsx";
+import { useApp } from "../../context/AppContext.jsx";
+import './customModal.scss'; // Import the SCSS file
 
-const CustomModal = ({ isOpen, onClose, title, children, isDarkMode, theme }) => {
+const CustomModal = ({
+    isOpen,
+    onClose,
+    title,
+    children,
+    isDarkMode,
+    theme,
+    // Size control props (optional)
+    size = 'medium', // 'small', 'medium', 'large', 'xlarge', 'fullscreen'
+    maxWidth,
+    width,
+    height,
+    // Behavior props (optional)
+    className = '',
+    hideHeader = false,
+    closeOnBackdrop = true,
+    closeOnEscape = true
+}) => {
     const { openModal, closeModal } = useApp();
 
     // Sync with global modal state
@@ -22,10 +41,17 @@ const CustomModal = ({ isOpen, onClose, title, children, isDarkMode, theme }) =>
         }
     };
 
+    // Handle backdrop click
+    const handleBackdropClick = () => {
+        if (closeOnBackdrop) {
+            handleClose();
+        }
+    };
+
     // Handle escape key
     useEffect(() => {
         const handleEscapeKey = (e) => {
-            if (e.key === 'Escape' && isOpen) {
+            if (e.key === 'Escape' && isOpen && closeOnEscape) {
                 handleClose();
             }
         };
@@ -37,94 +63,115 @@ const CustomModal = ({ isOpen, onClose, title, children, isDarkMode, theme }) =>
         return () => {
             document.removeEventListener('keydown', handleEscapeKey);
         };
+    }, [isOpen, closeOnEscape, handleClose]);
+
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (isOpen) {
+            const originalStyle = window.getComputedStyle(document.body).overflow;
+            document.body.style.overflow = 'hidden';
+
+            return () => {
+                document.body.style.overflow = originalStyle;
+            };
+        }
     }, [isOpen]);
 
     if (!isOpen) return null;
 
+    // Get theme colors
     const t = isDarkMode ? theme.dark : theme.light;
 
-    return (
+    // Size mapping
+    const sizeClasses = {
+        small: 'modal-small',
+        medium: 'modal-medium',
+        large: 'modal-large',
+        xlarge: 'modal-xlarge',
+        fullscreen: 'modal-fullscreen'
+    };
+
+    // Custom styles for width/height props
+    const customStyles = {};
+    if (maxWidth) customStyles.maxWidth = maxWidth;
+    if (width) customStyles.width = width;
+    if (height) customStyles.height = height;
+
+    const modalContent = (
         <div
-            style={{
-                position: 'fixed',
-                top: 0,
-                left: 0,
-                right: 0,
-                bottom: 0,
-                background: 'rgba(0, 0, 0, 0.6)',
-                zIndex: 9999, // Very high z-index to stay above navbar
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '1rem'
-            }}
-            onClick={handleClose}
+            className={`custom-modal-overlay ${isDarkMode ? 'dark-mode' : 'light-mode'}`}
+            onClick={handleBackdropClick}
         >
             <div
+                className={`custom-modal ${sizeClasses[size]} ${className}`}
                 style={{
                     background: t.cardBg,
-                    borderRadius: '12px',
                     border: `1px solid ${t.border}`,
-                    maxWidth: '500px',
-                    width: '100%',
-                    maxHeight: '90vh',
-                    overflow: 'auto',
-                    position: 'relative',
-                    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-                    zIndex: 10000 // Even higher z-index for modal content
+                    ...customStyles
                 }}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Modal Header */}
-                <div
-                    style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        padding: '1.5rem 1.5rem 1rem 1.5rem',
-                        borderBottom: `1px solid ${t.border}`,
-                        position: 'sticky',
-                        top: 0,
-                        background: t.cardBg,
-                        borderRadius: '12px 12px 0 0',
-                        zIndex: 10001
-                    }}
-                >
-                    <h2 style={{ margin: 0, color: t.text, fontSize: '1.25rem' }}>
-                        {title}
-                    </h2>
-                    <button
-                        onClick={handleClose}
+                {!hideHeader && (
+                    <div
+                        className="custom-modal-header"
                         style={{
-                            background: 'none',
-                            border: 'none',
-                            color: t.textSec,
-                            cursor: 'pointer',
-                            padding: '0.25rem',
-                            borderRadius: '4px',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            transition: 'background-color 0.2s',
-                        }}
-                        onMouseEnter={(e) => {
-                            e.target.style.backgroundColor = t.border;
-                        }}
-                        onMouseLeave={(e) => {
-                            e.target.style.backgroundColor = 'transparent';
+                            borderBottom: `1px solid ${t.border}`,
+                            background: t.cardBg,
                         }}
                     >
-                        <X size={20} />
-                    </button>
-                </div>
+                        <h2
+                            className="custom-modal-title"
+                            style={{ color: t.text }}
+                        >
+                            {title}
+                        </h2>
+                        <button
+                            className="custom-modal-close"
+                            onClick={handleClose}
+                            style={{ color: t.textSec }}
+                            aria-label="Close modal"
+                        >
+                            <X size={18} />
+                        </button>
+                    </div>
+                )}
 
                 {/* Modal Body */}
-                <div style={{ padding: '1.5rem' }}>
+                <div className={`custom-modal-body ${hideHeader ? 'no-header' : ''}`}>
                     {children}
                 </div>
             </div>
         </div>
     );
+
+    // Render modal using portal to document.body
+    return createPortal(modalContent, document.body);
 };
 
 export default CustomModal;
+
+
+// <CustomModal
+//     // Core required props
+//     isOpen={modalState.isOpen}
+//     onClose={closeModal}
+//     title={modalState.type === 'add' ? 'Add New Product' : 'Edit Product'}
+//     isDarkMode={isDarkMode}
+//     theme={theme}
+//
+//     // Size control (optional)
+//     size="large"
+//     maxWidth="900px"
+//     width="800px"
+//     height="600px"
+//
+//     // Behavior control (optional)
+//     className="product-modal special-modal"
+//     hideHeader={false}
+//     closeOnBackdrop={true}
+//     closeOnEscape={true}
+// >
+//     {/* Your modal content */}
+//     <YourFormComponent />
+// </CustomModal>

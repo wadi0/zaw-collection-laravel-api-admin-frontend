@@ -34,7 +34,7 @@ export const AppProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
 
-    // Modal state management
+    // Modal state management (simplified)
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(true);
 
@@ -48,26 +48,8 @@ export const AppProvider = ({ children }) => {
         console.log('AppContext - isLoggedIn changed to:', isLoggedIn);
     }, [isLoggedIn]);
 
-    // Auto close sidebar when modal opens
-    useEffect(() => {
-        if (isModalOpen) {
-            setSidebarOpen(false);
-        }
-    }, [isModalOpen]);
-
-    // Prevent body scroll when modal is open
-    useEffect(() => {
-        if (isModalOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
-
-        // Cleanup on unmount
-        return () => {
-            document.body.style.overflow = 'unset';
-        };
-    }, [isModalOpen]);
+    // Removed: Auto close sidebar when modal opens - no longer needed
+    // Modal body scroll prevention is now handled by CustomModal itself
 
     const theme = {
         light: {
@@ -101,24 +83,19 @@ export const AppProvider = ({ children }) => {
         localStorage.removeItem("user");
     };
 
-    // Modal functions
+    // Modal functions (simplified)
     const openModal = () => {
         setIsModalOpen(true);
     };
 
     const closeModal = () => {
         setIsModalOpen(false);
-        // Restore sidebar state when modal closes (check screen size)
-        const isMobile = window.innerWidth <= 768;
-        if (!isMobile) {
-            setSidebarOpen(true);
-        }
+        // Removed: sidebar state restore logic - not needed anymore
     };
 
-    // Sidebar functions
+    // Sidebar functions (independent of modal)
     const toggleSidebar = () => {
-        // Don't allow sidebar to open if modal is open
-        if (isModalOpen) return;
+        // Removed: modal check - sidebar can work independently now
         setSidebarOpen(!sidebarOpen);
     };
 
@@ -144,7 +121,7 @@ export const AppProvider = ({ children }) => {
         setIsModalOpen,
         openModal,
         closeModal,
-        // Sidebar state and functions
+        // Sidebar state and functions (independent)
         sidebarOpen,
         setSidebarOpen,
         toggleSidebar,
