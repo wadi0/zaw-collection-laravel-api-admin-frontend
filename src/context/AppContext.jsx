@@ -34,6 +34,10 @@ export const AppProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
 
+    // Modal state management
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [sidebarOpen, setSidebarOpen] = useState(true);
+
     // Check localStorage on app start - now only for debugging
     useEffect(() => {
         console.log('AppContext - Initial state set:', { isLoggedIn, user });
@@ -43,6 +47,27 @@ export const AppProvider = ({ children }) => {
     useEffect(() => {
         console.log('AppContext - isLoggedIn changed to:', isLoggedIn);
     }, [isLoggedIn]);
+
+    // Auto close sidebar when modal opens
+    useEffect(() => {
+        if (isModalOpen) {
+            setSidebarOpen(false);
+        }
+    }, [isModalOpen]);
+
+    // Prevent body scroll when modal is open
+    useEffect(() => {
+        if (isModalOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+
+        // Cleanup on unmount
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isModalOpen]);
 
     const theme = {
         light: {
@@ -76,6 +101,31 @@ export const AppProvider = ({ children }) => {
         localStorage.removeItem("user");
     };
 
+    // Modal functions
+    const openModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+        // Restore sidebar state when modal closes (check screen size)
+        const isMobile = window.innerWidth <= 768;
+        if (!isMobile) {
+            setSidebarOpen(true);
+        }
+    };
+
+    // Sidebar functions
+    const toggleSidebar = () => {
+        // Don't allow sidebar to open if modal is open
+        if (isModalOpen) return;
+        setSidebarOpen(!sidebarOpen);
+    };
+
+    const closeSidebar = () => {
+        setSidebarOpen(false);
+    };
+
     const value = {
         isDarkMode,
         setIsDarkMode,
@@ -88,7 +138,17 @@ export const AppProvider = ({ children }) => {
         setCategories,
         theme,
         login,
-        logout
+        logout,
+        // Modal state and functions
+        isModalOpen,
+        setIsModalOpen,
+        openModal,
+        closeModal,
+        // Sidebar state and functions
+        sidebarOpen,
+        setSidebarOpen,
+        toggleSidebar,
+        closeSidebar
     };
 
     return (
