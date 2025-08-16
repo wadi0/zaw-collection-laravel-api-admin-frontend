@@ -3,6 +3,13 @@ button {
   outline: none !important;
   border: none !important;
   box-shadow: none !important;
+
+  // All SVG icons inside buttons should not interfere with button clicks
+  svg {
+    pointer-events: none;
+    cursor: inherit; // Inherit cursor from parent button
+  }
+
   &:focus, &:active, &:focus-visible {
     outline: none !important;
     border: none !important;
@@ -39,30 +46,17 @@ button {
     background: none;
     border: none;
     cursor: pointer;
-    padding: 8px;
+    padding: 0 8px;
     border-radius: 8px;
     transition: all 0.3s ease;
-  }
-
-  .hamburger {
     display: flex;
-    flex-direction: column;
-    width: 20px;
-    height: 16px;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
 
-    span {
-      display: block;
-      height: 2px;
-      width: 100%;
-      border-radius: 2px;
-      transition: all 0.3s ease;
-    }
-
-    &.active {
-      span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
-      span:nth-child(2) { opacity: 0; }
-      span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+    // Ensure icon doesn't interfere with button click
+    svg {
+      pointer-events: none !important;
+      cursor: pointer !important;
     }
   }
 
@@ -121,6 +115,11 @@ button {
       position: relative;
       overflow: hidden;
 
+      // Icons inside nav links should not interfere
+      svg {
+        pointer-events: none !important;
+      }
+
       &::before {
         content: '';
         position: absolute;
@@ -141,6 +140,7 @@ button {
 
       .dropdown-arrow {
         transition: transform 0.3s ease;
+        pointer-events: none !important;
       }
 
       &.dropdown-open .dropdown-arrow {
@@ -223,6 +223,13 @@ button {
         cursor: pointer;
         transition: background-color 0.3s ease;
         margin-left: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        svg {
+          pointer-events: none !important;
+        }
       }
     }
   }
@@ -270,6 +277,10 @@ button {
         display: flex;
         align-items: center;
         justify-content: center;
+
+        svg {
+          pointer-events: none !important;
+        }
       }
     }
   }
@@ -290,6 +301,11 @@ button {
     border-radius: 8px;
     cursor: pointer;
     transition: all 0.3s ease;
+
+    svg {
+      pointer-events: none !important;
+    }
+
     &:hover { transform: translateY(-1px); }
   }
 
@@ -306,6 +322,7 @@ button {
       border-radius: 10px;
       min-width: 16px;
       text-align: center;
+      pointer-events: none;
     }
   }
 
@@ -390,6 +407,10 @@ button {
           &.info { background: #dbeafe; color: #1d4ed8; }
           &.success { background: #dcfce7; color: #16a34a; }
           &.warning { background: #fef3c7; color: #d97706; }
+
+          svg {
+            pointer-events: none;
+          }
         }
 
         &:hover .notification-icon { transform: scale(1.1); }
@@ -470,6 +491,7 @@ button {
       color: white;
       font-weight: 600;
       font-size: 12px;
+      pointer-events: none;
     }
   }
 
@@ -520,6 +542,10 @@ button {
       transition: all 0.2s ease;
       font-size: 14px;
 
+      svg {
+        pointer-events: none;
+      }
+
       &:hover {
         transform: translateX(4px);
       }
@@ -533,6 +559,10 @@ button {
     cursor: pointer;
     padding: 8px;
     border-radius: 4px;
+
+    svg {
+      pointer-events: none !important;
+    }
   }
 
   // Light Mode
@@ -544,7 +574,6 @@ button {
       color: #1f2937;
     }
 
-    .hamburger span { background: #1f2937; }
     .sidebar-toggle:hover { background: rgba(0, 0, 0, 0.05); }
 
     .nav-link {
@@ -674,7 +703,6 @@ button {
       color: #ffffff;
     }
 
-    .hamburger span { background: #ffffff; }
     .sidebar-toggle:hover { background: rgba(255, 255, 255, 0.1); }
 
     .nav-link {
@@ -821,6 +849,10 @@ button {
         display: flex;
         align-items: center;
         gap: 12px;
+
+        svg {
+          pointer-events: none;
+        }
       }
 
       &:hover, &.active { transform: translateX(2px); }
@@ -828,6 +860,7 @@ button {
 
     .mobile-dropdown-arrow {
       transition: transform 0.3s ease;
+      pointer-events: none;
       &.open { transform: rotate(180deg); }
     }
 

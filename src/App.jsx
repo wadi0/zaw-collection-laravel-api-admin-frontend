@@ -13,6 +13,7 @@ import Categories from "./pages/categories/Categories.jsx";
 import AddProduct from "./pages/product/AddProduct.jsx";
 import Home from "./pages/home/Home.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
+import path from "./routes/path.jsx";
 
 function App() {
     return (
@@ -23,8 +24,8 @@ function App() {
                     <Route element={<PublicRoute />}>
                         <Route path="/" element={<AuthLayout />}>
                             <Route index element={<Home />} />
-                            <Route path="signin" element={<SignIn />} />
-                            <Route path="signup" element={<SignUp />} />
+                            <Route path={path.signin} element={<SignIn />} />
+                            <Route path={path.signup} element={<SignUp />} />
                         </Route>
                     </Route>
 

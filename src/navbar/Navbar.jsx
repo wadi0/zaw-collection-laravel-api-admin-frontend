@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Home, Package, ShoppingCart, Users, BarChart3,
-  Tag, Truck, Bell, Search, Menu, X, ChevronDown, LogOut, User, Sun, Moon
+    Home, Package, ShoppingCart, Users, BarChart3,
+    Tag, Truck, Bell, Search, PanelLeft, PanelLeftClose, X, ChevronDown, LogOut, User, Sun, Moon, Menu
 } from 'lucide-react';
 import './navbar.scss';
 import {useApp} from "../context/AppContext.jsx";
@@ -233,11 +233,8 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
             className="sidebar-toggle"
             title="Toggle Sidebar"
           >
-            <div className={`hamburger ${!sidebarVisible ? 'active' : ''}`}>
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
+            {/* Conditional sidebar icon - now it should work properly */}
+            {sidebarVisible ? <PanelLeftClose size={20} /> : <PanelLeft size={20} />}
           </button>
           <Link to="/admin/dashboard" className="logo">
             <div className="logo-icon">A</div>
