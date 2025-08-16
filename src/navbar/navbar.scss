@@ -23,7 +23,7 @@ button {
   top: 0;
   left: 0;
   right: 0;
-  height: 70px;
+  height: 70px; // Fixed height for all screen sizes
   z-index: 1000;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(20px);
@@ -574,8 +574,6 @@ button {
       color: #1f2937;
     }
 
-    .sidebar-toggle:hover { background: rgba(0, 0, 0, 0.05); }
-
     .nav-link {
       color: #6b7280;
       &:hover, &.active { color: #ffffff; }
@@ -703,8 +701,6 @@ button {
       color: #ffffff;
     }
 
-    .sidebar-toggle:hover { background: rgba(255, 255, 255, 0.1); }
-
     .nav-link {
       color: rgba(255, 255, 255, 0.8);
       &:hover, &.active { color: #ffffff; }
@@ -823,10 +819,10 @@ button {
 // Mobile Menu
 .mobile-menu {
   position: fixed;
-  top: 70px;
+  top: 70px; // Fixed to match navbar height
   left: 0;
   right: 0;
-  max-height: calc(100vh - 70px);
+  max-height: calc(100vh - 70px); // Fixed to match navbar height
   overflow-y: auto;
   z-index: 9997;
 
@@ -999,7 +995,7 @@ button {
 
     .notification-menu, .profile-menu {
       position: fixed;
-      top: 70px;
+      top: 70px; // Fixed to match navbar height
       z-index: 9999;
     }
 
@@ -1040,20 +1036,20 @@ button {
       right: 8px;
       min-width: 260px;
       max-width: calc(100vw - 16px);
+      top: 70px; // Fixed to match navbar height
     }
 
     .profile-menu {
       right: 8px;
       min-width: 160px;
       max-width: calc(100vw - 16px);
+      top: 70px; // Fixed to match navbar height
     }
   }
 }
 
 @media (max-width: 480px) {
   .navbar {
-    height: 60px;
-
     .container {
       padding: 0 6px;
       gap: 4px;
@@ -1089,7 +1085,7 @@ button {
     }
 
     .notification-menu, .profile-menu {
-      top: 60px;
+      top: 70px; // Fixed to match navbar height
     }
 
     .notification-menu {
@@ -1111,8 +1107,8 @@ button {
   }
 
   .mobile-menu {
-    top: 60px;
-    max-height: calc(100vh - 60px);
+    top: 70px; // Fixed to match navbar height
+    max-height: calc(100vh - 70px); // Fixed to match navbar height
 
     .mobile-nav-item {
       .mobile-nav-link {
@@ -1169,12 +1165,14 @@ button {
       right: 4px;
       min-width: 220px;
       max-width: calc(100vw - 8px);
+      top: 70px; // Fixed to match navbar height
     }
 
     .profile-menu {
       right: 4px;
       min-width: 140px;
       max-width: calc(100vw - 8px);
+      top: 70px; // Fixed to match navbar height
     }
 
     .mobile-search-dropdown {
@@ -1184,6 +1182,9 @@ button {
   }
 
   .mobile-menu {
+    top: 70px; // Fixed to match navbar height
+    max-height: calc(100vh - 70px); // Fixed to match navbar height
+
     .mobile-nav-item {
       .mobile-nav-link {
         padding: 10px 8px;
@@ -1237,12 +1238,14 @@ button {
       right: 3px;
       min-width: 200px;
       max-width: calc(100vw - 6px);
+      top: 70px; // Fixed to match navbar height
     }
 
     .profile-menu {
       right: 3px;
       min-width: 120px;
       max-width: calc(100vw - 6px);
+      top: 70px; // Fixed to match navbar height
     }
 
     .mobile-search-dropdown {
@@ -1252,6 +1255,9 @@ button {
   }
 
   .mobile-menu {
+    top: 70px; // Fixed to match navbar height
+    max-height: calc(100vh - 70px); // Fixed to match navbar height
+
     .mobile-nav-item {
       .mobile-nav-link {
         padding: 10px 6px;
@@ -1270,8 +1276,6 @@ button {
 
 @media (max-width: 320px) {
   .navbar {
-    height: 55px;
-
     .container {
       padding: 0 2px;
       gap: 2px;
@@ -1308,14 +1312,14 @@ button {
       right: 2px;
       min-width: 180px;
       max-width: calc(100vw - 4px);
-      top: 55px;
+      top: 70px; // Fixed to match navbar height
     }
 
     .profile-menu {
       right: 2px;
       min-width: 110px;
       max-width: calc(100vw - 4px);
-      top: 55px;
+      top: 70px; // Fixed to match navbar height
     }
 
     .mobile-search-dropdown {
@@ -1325,8 +1329,8 @@ button {
   }
 
   .mobile-menu {
-    top: 55px;
-    max-height: calc(100vh - 55px);
+    top: 70px; // Fixed to match navbar height
+    max-height: calc(100vh - 70px); // Fixed to match navbar height
 
     .mobile-nav-item {
       .mobile-nav-link {
