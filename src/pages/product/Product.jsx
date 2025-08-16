@@ -1,7 +1,154 @@
 import React, { useState } from 'react';
-import { Plus, Edit, Trash2 } from 'lucide-react';
+import { Plus, Edit, Trash2, X } from 'lucide-react';
+import CustomModal from "../../components/customModal/CustomModal.jsx";
+import AddProduct from "./AddProduct.jsx";
+// Product Form Component
+const ProductForm = ({ product, onSave, onCancel, isDarkMode, theme }) => {
+  const [formData, setFormData] = useState({
+    name: product?.name || '',
+    price: product?.price || '',
+    category: product?.category || 'Electronics',
+    image: product?.image || ''
+  });
 
-// Reusable Product component
+  const t = isDarkMode ? theme.dark : theme.light;
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = () => {
+    if (!formData.name || !formData.price) {
+      alert('Please fill in all required fields');
+      return;
+    }
+    onSave({
+      ...formData,
+      price: parseFloat(formData.price) || 0,
+      id: product?.id || Date.now()
+    });
+  };
+
+  const inputStyle = {
+    width: '100%',
+    padding: '0.75rem',
+    borderRadius: '8px',
+    border: `1px solid ${t.border}`,
+    background: t.bg,
+    color: t.text,
+    fontSize: '1rem',
+    marginBottom: '1rem'
+  };
+
+  const labelStyle = {
+    display: 'block',
+    marginBottom: '0.5rem',
+    color: t.text,
+    fontWeight: '500'
+  };
+
+  return (
+    <div>
+      <div>
+        <label style={labelStyle}>Product Name</label>
+        <input
+          type="text"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          style={inputStyle}
+          placeholder="Enter product name"
+        />
+      </div>
+
+      <div>
+        <label style={labelStyle}>Price ($)</label>
+        <input
+          type="number"
+          name="price"
+          value={formData.price}
+          onChange={handleChange}
+          style={inputStyle}
+          placeholder="Enter price"
+          min="0"
+          step="0.01"
+        />
+      </div>
+
+      <div>
+        <label style={labelStyle}>Category</label>
+        <select
+          name="category"
+          value={formData.category}
+          onChange={handleChange}
+          style={inputStyle}
+        >
+          <option value="Electronics">Electronics</option>
+          <option value="Fashion">Fashion</option>
+          <option value="Books">Books</option>
+          <option value="Sports">Sports</option>
+          <option value="Home">Home</option>
+        </select>
+      </div>
+
+      <div>
+        <label style={labelStyle}>Image URL</label>
+        <input
+          type="url"
+          name="image"
+          value={formData.image}
+          onChange={handleChange}
+          style={inputStyle}
+          placeholder="Enter image URL"
+        />
+      </div>
+
+      <div style={{
+        display: 'flex',
+        gap: '1rem',
+        justifyContent: 'flex-end',
+        marginTop: '1.5rem',
+        flexWrap: 'wrap'
+      }}>
+        <button
+          onClick={onCancel}
+          style={{
+            padding: '0.75rem 1.5rem',
+            borderRadius: '8px',
+            border: `1px solid ${t.border}`,
+            background: t.bg,
+            color: t.text,
+            cursor: 'pointer',
+            fontSize: '1rem',
+            minWidth: '80px'
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleSubmit}
+          style={{
+            padding: '0.75rem 1.5rem',
+            borderRadius: '8px',
+            border: 'none',
+            background: t.primary,
+            color: 'white',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            minWidth: '80px'
+          }}
+        >
+          {product ? 'Update' : 'Save'}
+        </button>
+      </div>
+    </div>
+  );
+};
+
+// Updated Product component
 const Product = ({
   isDarkMode,
   theme,
@@ -14,7 +161,38 @@ const Product = ({
   onEditProduct,
   onDeleteProduct
 }) => {
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    type: null, // 'add' or 'edit'
+    product: null
+  });
+
   const t = isDarkMode ? theme.dark : theme.light;
+
+  const openModal = (type, product = null) => {
+    setModalState({
+      isOpen: true,
+      type,
+      product
+    });
+  };
+
+  const closeModal = () => {
+    setModalState({
+      isOpen: false,
+      type: null,
+      product: null
+    });
+  };
+
+  const handleSaveProduct = (productData) => {
+    if (modalState.type === 'add') {
+      onAddProduct && onAddProduct(productData);
+    } else if (modalState.type === 'edit') {
+      onEditProduct && onEditProduct(productData);
+    }
+    closeModal();
+  };
 
   return (
     <div>
@@ -28,7 +206,7 @@ const Product = ({
       }}>
         <h1 style={{ margin: 0, color: t.text, fontSize: '2rem' }}>Products</h1>
         <button
-          onClick={onAddProduct}
+          onClick={() => openModal('add')}
           style={{
             background: t.gradient,
             color: 'white',
@@ -87,7 +265,7 @@ const Product = ({
                   <td style={{ padding: '1rem' }}>
                     <div style={{ display: 'flex', gap: '0.5rem' }}>
                       <button
-                        onClick={() => onEditProduct && onEditProduct(product)}
+                        onClick={() => openModal('edit', product)}
                         style={{
                           background: t.primary,
                           color: 'white',
@@ -122,11 +300,29 @@ const Product = ({
           </table>
         </div>
       </div>
+
+      {/* Modal */}
+      <CustomModal
+        isOpen={modalState.isOpen}
+        onClose={closeModal}
+        title={modalState.type === 'add' ? 'Add New Product' : 'Edit Product'}
+        isDarkMode={isDarkMode}
+        theme={theme}
+      >
+          <AddProduct />
+        <ProductForm
+          product={modalState.product}
+          onSave={handleSaveProduct}
+          onCancel={closeModal}
+          isDarkMode={isDarkMode}
+          theme={theme}
+        />
+      </CustomModal>
     </div>
   );
 };
 
-// Demo component for testing Product
+// Demo component for testing Product with Modal
 const ProductDemo = () => {
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [products, setProducts] = useState([
@@ -148,12 +344,12 @@ const ProductDemo = () => {
     }
   };
 
-  const handleAddProduct = () => {
-    alert('Navigate to Add Product page');
+  const handleAddProduct = (product) => {
+    setProducts([...products, product]);
   };
 
-  const handleEditProduct = (product) => {
-    alert(`Edit product: ${product.name}`);
+  const handleEditProduct = (updatedProduct) => {
+    setProducts(products.map(p => p.id === updatedProduct.id ? updatedProduct : p));
   };
 
   const handleDeleteProduct = (id) => {
@@ -166,7 +362,7 @@ const ProductDemo = () => {
     <div style={{
       minHeight: '100vh',
       background: isDarkMode ? theme.dark.bg : theme.light.bg,
-      padding: '2rem'
+      padding: '1rem'
     }}>
       <div style={{ marginBottom: '2rem' }}>
         <button
@@ -196,5 +392,5 @@ const ProductDemo = () => {
   );
 };
 
-export default ProductDemo; // Export the demo component
-export { Product }; // Export the reusable component
+export default ProductDemo;
+export { Product, ProductForm };

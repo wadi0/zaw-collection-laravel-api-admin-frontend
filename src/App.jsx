@@ -10,7 +10,6 @@ import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import Profile from "./pages/profile/Profile.jsx";
 import Product from "./pages/product/Product.jsx";
 import Categories from "./pages/categories/Categories.jsx";
-import AddProduct from "./pages/product/AddProduct.jsx";
 import Home from "./pages/home/Home.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import path from "./routes/path.jsx";
@@ -35,7 +34,6 @@ function App() {
                             <Route index element={<Navigate to="/admin/dashboard" replace />} />
                             <Route path="dashboard" element={<Dashboard />} />
                             <Route path="products" element={<Product />} />
-                            <Route path="products/add" element={<AddProduct />} />
                             <Route path="categories" element={<Categories />} />
                             <Route path="profile" element={<Profile />} />
                         </Route>
