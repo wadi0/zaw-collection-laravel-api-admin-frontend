@@ -7,6 +7,7 @@ import {
     FileText, Bell, HelpCircle, Star, TrendingUp
 } from 'lucide-react';
 import "./sidebar.scss"
+import path from "../routes/path.jsx";
 
 const Sidebar = ({ isVisible, onClose }) => {
     const [activeAccordion, setActiveAccordion] = useState('');
@@ -30,9 +31,9 @@ const Sidebar = ({ isVisible, onClose }) => {
             icon: Package,
             badge: '12',
             children: [
-                { id: 'all-products', label: 'All Products', path: '/admin/products' },
-                { id: 'add-product', label: 'Add Product', path: '/admin/products/add' },
-                { id: 'categories', label: 'Categories', path: '/admin/products/categories' },
+                { id: 'all-products', label: 'All Products', path: path.product },
+                { id: 'add-product', label: 'Add Product', path: path.categories },
+                { id: 'categories', label: 'Categories', path: path.categories },
                 { id: 'inventory', label: 'Inventory', path: '/admin/products/inventory' }
             ]
         },

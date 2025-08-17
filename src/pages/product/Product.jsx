@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import {useApp} from "../../context/AppContext.jsx";
+import { useApp } from "../../context/AppContext.jsx";
 import CustomModal from "../../components/customModal/CustomModal.jsx";
 
-// Product Form Component
-const ProductForm = ({ product, onSave, onCancel, isDarkMode, theme }) => {
+// Category Form Component
+const CategoryForm = ({ category, onSave, onCancel, isDarkMode, theme }) => {
     const [formData, setFormData] = useState({
-        name: product?.name || '',
-        price: product?.price || '',
-        category: product?.category || 'Electronics',
-        image: product?.image || ''
+        name: category?.name || '',
+        description: category?.description || ''
     });
 
     const t = isDarkMode ? theme.dark : theme.light;
@@ -22,14 +20,15 @@ const ProductForm = ({ product, onSave, onCancel, isDarkMode, theme }) => {
     };
 
     const handleSubmit = () => {
-        if (!formData.name || !formData.price) {
-            alert('Please fill in all required fields');
+        if (!formData.name) {
+            alert('Please fill in the category name');
             return;
         }
         onSave({
             ...formData,
-            price: parseFloat(formData.price) || 0,
-            id: product?.id || Date.now()
+            name: formData.name.trim(),
+            id: category?.id || Date.now(),
+            count: category?.count || 0
         });
     };
 
@@ -55,56 +54,26 @@ const ProductForm = ({ product, onSave, onCancel, isDarkMode, theme }) => {
     return (
         <div>
             <div>
-                <label style={labelStyle}>Product Name</label>
+                <label style={labelStyle}>Category Name</label>
                 <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
                     style={inputStyle}
-                    placeholder="Enter product name"
+                    placeholder="Enter category name"
                 />
             </div>
 
             <div>
-                <label style={labelStyle}>Price ($)</label>
+                <label style={labelStyle}>Description</label>
                 <input
-                    type="number"
-                    name="price"
-                    value={formData.price}
+                    type="text"
+                    name="description"
+                    value={formData.description}
                     onChange={handleChange}
                     style={inputStyle}
-                    placeholder="Enter price"
-                    min="0"
-                    step="0.01"
-                />
-            </div>
-
-            <div>
-                <label style={labelStyle}>Category</label>
-                <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    style={inputStyle}
-                >
-                    <option value="Electronics">Electronics</option>
-                    <option value="Fashion">Fashion</option>
-                    <option value="Books">Books</option>
-                    <option value="Sports">Sports</option>
-                    <option value="Home">Home</option>
-                </select>
-            </div>
-
-            <div>
-                <label style={labelStyle}>Image URL</label>
-                <input
-                    type="url"
-                    name="image"
-                    value={formData.image}
-                    onChange={handleChange}
-                    style={inputStyle}
-                    placeholder="Enter image URL"
+                    placeholder="Enter category description (optional)"
                 />
             </div>
 
@@ -143,38 +112,55 @@ const ProductForm = ({ product, onSave, onCancel, isDarkMode, theme }) => {
                         minWidth: '80px'
                     }}
                 >
-                    {product ? 'Update' : 'Save'}
+                    {category ? 'Update' : 'Save'}
                 </button>
             </div>
         </div>
     );
 };
 
-// Main Product Component
-const Product = ({
-    products = [
-        { id: 1, name: 'MacBook Pro', price: 1299, category: 'Electronics', image: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=400&h=300&fit=crop' },
-        { id: 2, name: 'iPhone 15', price: 999, category: 'Electronics', image: 'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400&h=300&fit=crop' },
-        { id: 3, name: 'Nike Shoes', price: 150, category: 'Fashion', image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&h=300&fit=crop' }
+// Main Categories Component
+const Categories = ({
+    categories = [
+        { id: 1, name: 'Electronics', description: 'Electronic devices and gadgets', count: 15 },
+        { id: 2, name: 'Fashion', description: 'Clothing and accessories', count: 8 },
+        { id: 3, name: 'Home', description: 'Home and garden items', count: 12 },
+        { id: 4, name: 'Books', description: 'Books and educational materials', count: 5 },
+        { id: 5, name: 'Sports', description: 'Sports and fitness equipment', count: 7 }
     ],
-    onAddProduct,
-    onEditProduct,
-    onDeleteProduct
+    onAddCategory,
+    onEditCategory,
+    onDeleteCategory
 }) => {
     const [modalState, setModalState] = useState({
         isOpen: false,
         type: null, // 'add' or 'edit'
-        product: null
+        category: null
     });
 
+    // Temporary debug version - comment out useApp if causing issues
     const { isDarkMode, theme, isModalOpen } = useApp();
-    const t = isDarkMode ? theme.dark : theme.light;
+    const t = isDarkMode ? theme?.dark : theme?.light;
 
-    const openModal = (type, product = null) => {
+    // Fallback theme if useApp is causing issues
+    // const isDarkMode = false;
+    // const isModalOpen = false;
+    // const t = {
+    //     text: '#000',
+    //     bg: '#fff',
+    //     cardBg: '#fff',
+    //     border: '#e2e8f0',
+    //     textSec: '#64748b',
+    //     primary: '#3b82f6',
+    //     danger: '#ef4444',
+    //     gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+    // };
+
+    const openModal = (type, category = null) => {
         setModalState({
             isOpen: true,
             type,
-            product
+            category
         });
     };
 
@@ -182,22 +168,22 @@ const Product = ({
         setModalState({
             isOpen: false,
             type: null,
-            product: null
+            category: null
         });
     };
 
-    const handleSaveProduct = (productData) => {
+    const handleSaveCategory = (categoryData) => {
         if (modalState.type === 'add') {
-            onAddProduct && onAddProduct(productData);
+            onAddCategory && onAddCategory(categoryData);
         } else if (modalState.type === 'edit') {
-            onEditProduct && onEditProduct(productData);
+            onEditCategory && onEditCategory(categoryData);
         }
         closeModal();
     };
 
-    const handleDeleteProduct = (id) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            onDeleteProduct && onDeleteProduct(id);
+    const handleDeleteCategory = (id) => {
+        if (window.confirm('Are you sure you want to delete this category?')) {
+            onDeleteCategory && onDeleteCategory(id);
         }
     };
 
@@ -218,7 +204,7 @@ const Product = ({
                     fontSize: '2rem',
                     fontWeight: '600'
                 }}>
-                    Products
+                    Categories
                 </h1>
                 <button
                     onClick={() => openModal('add')}
@@ -239,11 +225,11 @@ const Product = ({
                         fontWeight: '500'
                     }}
                 >
-                    <Plus size={18} /> Add Product
+                    <Plus size={18} /> Add Category
                 </button>
             </div>
 
-            {/* Products Table */}
+            {/* Categories Table */}
             <div style={{
                 background: t.cardBg,
                 borderRadius: '12px',
@@ -268,17 +254,6 @@ const Product = ({
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.05em'
                                 }}>
-                                    Product
-                                </th>
-                                <th style={{
-                                    padding: '1rem',
-                                    textAlign: 'left',
-                                    color: t.text,
-                                    fontWeight: '600',
-                                    fontSize: '0.875rem',
-                                    textTransform: 'uppercase',
-                                    letterSpacing: '0.05em'
-                                }}>
                                     Category
                                 </th>
                                 <th style={{
@@ -290,7 +265,18 @@ const Product = ({
                                     textTransform: 'uppercase',
                                     letterSpacing: '0.05em'
                                 }}>
-                                    Price
+                                    Description
+                                </th>
+                                <th style={{
+                                    padding: '1rem',
+                                    textAlign: 'left',
+                                    color: t.text,
+                                    fontWeight: '600',
+                                    fontSize: '0.875rem',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.05em'
+                                }}>
+                                    Products
                                 </th>
                                 <th style={{
                                     padding: '1rem',
@@ -306,7 +292,7 @@ const Product = ({
                             </tr>
                         </thead>
                         <tbody>
-                            {products.length === 0 ? (
+                            {categories.length === 0 ? (
                                 <tr>
                                     <td
                                         colSpan="4"
@@ -316,15 +302,15 @@ const Product = ({
                                             color: t.textSec
                                         }}
                                     >
-                                        No products found. Click "Add Product" to create your first product.
+                                        No categories found. Click "Add Category" to create your first category.
                                     </td>
                                 </tr>
                             ) : (
-                                products.map((product, index) => (
+                                categories.map((category, index) => (
                                     <tr
-                                        key={product.id}
+                                        key={category.id}
                                         style={{
-                                            borderBottom: index < products.length - 1 ? `1px solid ${t.border}` : 'none',
+                                            borderBottom: index < categories.length - 1 ? `1px solid ${t.border}` : 'none',
                                             transition: 'background-color 0.2s ease'
                                         }}
                                         onMouseEnter={(e) => {
@@ -335,38 +321,26 @@ const Product = ({
                                         }}
                                     >
                                         <td style={{ padding: '1rem' }}>
-                                            <div style={{
-                                                display: 'flex',
-                                                alignItems: 'center',
-                                                gap: '0.75rem'
+                                            <span style={{
+                                                color: t.text,
+                                                fontWeight: '500',
+                                                fontSize: '1rem'
                                             }}>
-                                                <img
-                                                    src={product.image}
-                                                    alt={product.name}
-                                                    style={{
-                                                        width: '50px',
-                                                        height: '50px',
-                                                        objectFit: 'cover',
-                                                        borderRadius: '6px',
-                                                        border: `1px solid ${t.border}`
-                                                    }}
-                                                    onError={(e) => {
-                                                        e.target.style.display = 'none';
-                                                    }}
-                                                />
-                                                <span style={{
-                                                    color: t.text,
-                                                    fontWeight: '500',
-                                                    fontSize: '1rem'
-                                                }}>
-                                                    {product.name}
-                                                </span>
-                                            </div>
+                                                {category.name}
+                                            </span>
                                         </td>
                                         <td style={{
                                             padding: '1rem',
                                             color: t.textSec,
                                             fontSize: '0.875rem'
+                                        }}>
+                                            {category.description || 'No description'}
+                                        </td>
+                                        <td style={{
+                                            padding: '1rem',
+                                            color: t.primary,
+                                            fontWeight: '600',
+                                            fontSize: '1rem'
                                         }}>
                                             <span style={{
                                                 background: isDarkMode ? '#374151' : '#f3f4f6',
@@ -376,21 +350,13 @@ const Product = ({
                                                 fontSize: '0.75rem',
                                                 fontWeight: '500'
                                             }}>
-                                                {product.category}
+                                                {category.count} product{category.count !== 1 ? 's' : ''}
                                             </span>
-                                        </td>
-                                        <td style={{
-                                            padding: '1rem',
-                                            color: t.primary,
-                                            fontWeight: '600',
-                                            fontSize: '1rem'
-                                        }}>
-                                            ${product.price}
                                         </td>
                                         <td style={{ padding: '1rem' }}>
                                             <div style={{ display: 'flex', gap: '0.5rem' }}>
                                                 <button
-                                                    onClick={() => openModal('edit', product)}
+                                                    onClick={() => openModal('edit', category)}
                                                     disabled={isModalOpen}
                                                     style={{
                                                         background: isModalOpen ? t.textSec : t.primary,
@@ -405,12 +371,12 @@ const Product = ({
                                                         alignItems: 'center',
                                                         justifyContent: 'center'
                                                     }}
-                                                    title="Edit product"
+                                                    title="Edit category"
                                                 >
                                                     <Edit size={14} />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeleteProduct(product.id)}
+                                                    onClick={() => handleDeleteCategory(category.id)}
                                                     disabled={isModalOpen}
                                                     style={{
                                                         background: isModalOpen ? t.textSec : t.danger,
@@ -425,7 +391,7 @@ const Product = ({
                                                         alignItems: 'center',
                                                         justifyContent: 'center'
                                                     }}
-                                                    title="Delete product"
+                                                    title="Delete category"
                                                 >
                                                     <Trash2 size={14} />
                                                 </button>
@@ -443,13 +409,13 @@ const Product = ({
             <CustomModal
                 isOpen={modalState.isOpen}
                 onClose={closeModal}
-                title={modalState.type === 'add' ? 'Add New Product' : 'Edit Product'}
+                title={modalState.type === 'add' ? 'Add New Category' : 'Edit Category'}
                 isDarkMode={isDarkMode}
                 theme={theme}
             >
-                <ProductForm
-                    product={modalState.product}
-                    onSave={handleSaveProduct}
+                <CategoryForm
+                    category={modalState.category}
+                    onSave={handleSaveCategory}
                     onCancel={closeModal}
                     isDarkMode={isDarkMode}
                     theme={theme}
@@ -459,4 +425,4 @@ const Product = ({
     );
 };
 
-export default Product;
+export default Categories;

@@ -1,4 +1,5 @@
 import React from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import {AppProvider} from "./context/AppContext.jsx";
 import AuthLayout from "./layout/AuthLayout.jsx";
@@ -33,8 +34,8 @@ function App() {
                         <Route path="/admin" element={<MainLayout />}>
                             <Route index element={<Navigate to="/admin/dashboard" replace />} />
                             <Route path="dashboard" element={<Dashboard />} />
-                            <Route path="products" element={<Product />} />
-                            <Route path="categories" element={<Categories />} />
+                            <Route path={path.product} element={<Product />} />
+                            <Route path={path.categories} element={<Categories />} />
                             <Route path="profile" element={<Profile />} />
                         </Route>
                     </Route>

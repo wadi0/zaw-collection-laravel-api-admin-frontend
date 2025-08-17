@@ -10,7 +10,7 @@ import {useApp} from "../context/AppContext.jsx";
 const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdown, setDropdown] = useState(null);
-  const [mobileDropdown, setMobileDropdown] = useState(null); // Separate state for mobile
+  const [mobileDropdown, setMobileDropdown] = useState(null);
   const [profile, setProfile] = useState(false);
   const [notifications, setNotifications] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
@@ -225,30 +225,29 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
   };
 
   return (
-    <nav className={`navbar ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
-      <div className="container">
-        <div className="navbar-left">
+    <nav className={`custom-navbar ${isDarkMode ? 'theme-dark' : 'theme-light'}`}>
+      <div className="navbar-wrapper">
+        <div className="navbar-start">
           <button
             onClick={onToggleSidebar}
-            className="sidebar-toggle"
+            className="sidebar-toggle-btn"
             title="Toggle Sidebar"
           >
-            {/* Conditional sidebar icon - now it should work properly */}
             {sidebarVisible ? <PanelLeftClose size={20} /> : <PanelLeft size={20} />}
           </button>
-          <Link to="/admin/dashboard" className="logo">
-            <div className="logo-icon">A</div>
-            <span className="logo-text">Admin Panel</span>
+          <Link to="/admin/dashboard" className="brand-logo">
+            <div className="brand-icon">A</div>
+            <span className="brand-text">Admin Panel</span>
           </Link>
         </div>
 
         {searchOpen ? (
-          <div className="search-expanded">
-            <div className="search-input-container">
+          <div className="search-bar-expanded">
+            <div className="search-field-wrapper">
               <input
                 type="text"
                 placeholder="Search anything..."
-                className="search-input-expanded"
+                className="search-field-input"
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && console.log('Search:', searchValue)}
@@ -256,14 +255,14 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
               />
               <button
                 onClick={() => console.log('Search:', searchValue)}
-                className="search-submit-btn"
+                className="search-submit-button"
                 title="Search"
               >
                 <Search size={16} />
               </button>
               <button
                 onClick={handleSearchClose}
-                className="search-close-btn"
+                className="search-close-button"
                 title="Close Search"
               >
                 <X size={16} />
@@ -271,25 +270,25 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
             </div>
           </div>
         ) : (
-          <ul className="nav-links">
+          <ul className="navigation-menu">
             {navItems.map((item) => (
-              <li key={item.name} className="nav-item">
+              <li key={item.name} className="menu-item">
                 {item.dropdown ? (
                   <>
                     <button
                       onClick={(e) => handleDropdownToggle(item.name, e)}
-                      className={`nav-link ${isDropdownActive(item.dropdown) ? 'active' : ''} ${dropdown === item.name ? 'dropdown-open' : ''}`}
+                      className={`menu-link ${isDropdownActive(item.dropdown) ? 'is-active' : ''} ${dropdown === item.name ? 'dropdown-expanded' : ''}`}
                     >
                       <item.icon size={18} />
                       <span>{item.name}</span>
-                      <ChevronDown size={12} className="dropdown-arrow" />
+                      <ChevronDown size={12} className="dropdown-indicator" />
                     </button>
-                    <div className={`dropdown-menu ${dropdown === item.name ? 'show' : ''}`}>
+                    <div className={`submenu-dropdown ${dropdown === item.name ? 'is-visible' : ''}`}>
                       {item.dropdown.map((subItem) => (
                         <Link
                           key={subItem.name}
                           to={subItem.href}
-                          className="dropdown-item"
+                          className="submenu-link"
                           onClick={() => handleLinkClick(subItem.href)}
                         >
                           {subItem.name}
@@ -300,7 +299,7 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
                 ) : (
                   <Link
                     to={item.href}
-                    className={`nav-link ${item.active ? 'active' : ''}`}
+                    className={`menu-link ${item.active ? 'is-active' : ''}`}
                     onClick={handleLinkClick}
                   >
                     <item.icon size={18} />
@@ -312,11 +311,11 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
           </ul>
         )}
 
-        <div className="navbar-actions">
+        <div className="navbar-end">
           {!searchOpen && !mobileSearchOpen && (
             <button
               onClick={window.innerWidth <= 1024 ? handleMobileSearchToggle : handleSearchToggle}
-              className="action-btn search-toggle"
+              className="action-button search-trigger"
               title="Open Search"
             >
               <Search size={18} />
@@ -325,30 +324,30 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
 
           <button
             onClick={toggleDarkMode}
-            className="action-btn theme-toggle"
+            className="action-button theme-switcher"
             title={isDarkMode ? "Light Mode" : "Dark Mode"}
           >
             {isDarkMode ? <Sun size={18} /> : <Moon size={18} />}
           </button>
 
-          <div className={`notification-dropdown ${notifications ? 'show' : ''}`}>
+          <div className={`notification-panel ${notifications ? 'is-open' : ''}`}>
             <button
               onClick={handleNotificationToggle}
-              className={`action-btn notification-btn ${notifications ? 'active' : ''}`}
+              className={`action-button notification-trigger ${notifications ? 'is-active' : ''}`}
               title="Notifications"
             >
               <Bell size={18} />
-              <span className="notification-badge">3</span>
+              <span className="notification-counter">3</span>
             </button>
             {notifications && (
-              <div className={`notification-menu ${notifications ? 'show' : ''}`}>
+              <div className={`notification-popup ${notifications ? 'is-visible' : ''}`}>
                 <div className="notification-header">
                   <h3>Notifications</h3>
                 </div>
                 <div className="notification-list">
                   {notificationData.map((notification) => (
                     <div key={notification.id} className="notification-item">
-                      <div className={`notification-icon ${notification.type}`}>
+                      <div className={`notification-icon status-${notification.type}`}>
                         <notification.icon size={16} />
                       </div>
                       <div className="notification-content">
@@ -360,31 +359,31 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
                   ))}
                 </div>
                 <div className="notification-footer">
-                  <a href="#" className="view-all-btn">View All Notifications</a>
+                  <a href="#" className="view-all-link">View All Notifications</a>
                 </div>
               </div>
             )}
           </div>
 
-          <div className={`profile-dropdown ${profile ? 'show' : ''}`}>
+          <div className={`profile-panel ${profile ? 'is-open' : ''}`}>
             <button
               onClick={handleProfileToggle}
-              className={`profile-btn ${profile ? 'active' : ''}`}
+              className={`profile-trigger ${profile ? 'is-active' : ''}`}
               title="Profile Menu"
             >
-              <div className="avatar">JD</div>
+              <div className="user-avatar">JD</div>
             </button>
             {profile && (
-              <div className={`profile-menu ${profile ? 'show' : ''}`}>
+              <div className={`profile-popup ${profile ? 'is-visible' : ''}`}>
                 <div className="profile-info">
-                  <p className="profile-name">John Doe</p>
-                  <p className="profile-email">john@example.com</p>
+                  <p className="user-name">John Doe</p>
+                  <p className="user-email">john@example.com</p>
                 </div>
-                <Link to="/admin/profile" className="profile-item" onClick={handleLinkClick}>
+                <Link to="/admin/profile" className="profile-link" onClick={handleLinkClick}>
                   <User size={16} />
                   Profile
                 </Link>
-                <button className="profile-item logout" onClick={() => {
+                <button className="profile-link logout-button" onClick={() => {
                   console.log('Logging out...');
                 }}>
                   <LogOut size={16} />
@@ -396,7 +395,7 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
 
           <button
             onClick={handleMobileMenuToggle}
-            className="mobile-menu-toggle"
+            className="mobile-toggle"
             title="Toggle Menu"
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
@@ -405,12 +404,12 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
       </div>
 
       {mobileSearchOpen && (
-        <div className={`mobile-search-dropdown ${mobileSearchOpen ? 'show' : ''}`}>
-          <div className="mobile-search-container">
+        <div className={`mobile-search-panel ${mobileSearchOpen ? 'is-visible' : ''}`}>
+          <div className="mobile-search-wrapper">
             <input
               type="text"
               placeholder="Search anything..."
-              className="mobile-search-input"
+              className="mobile-search-field"
               value={mobileSearchValue}
               onChange={(e) => setMobileSearchValue(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleMobileSearch()}
@@ -418,7 +417,7 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
             />
             <button
               onClick={handleMobileSearch}
-              className="mobile-search-btn"
+              className="mobile-search-button"
               title="Search"
             >
               <Search size={14} />
@@ -435,30 +434,30 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
       )}
 
       {mobileOpen && (
-        <div className={`mobile-menu ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
+        <div className={`mobile-navigation ${isDarkMode ? 'theme-dark' : 'theme-light'}`}>
           {navItems.map((item) => (
-            <div key={item.name} className="mobile-nav-item">
+            <div key={item.name} className="mobile-menu-item">
               {item.dropdown ? (
                 <>
                   <button
                     onClick={() => handleMobileDropdownToggle(item.name)}
-                    className={`mobile-nav-link ${isDropdownActive(item.dropdown) ? 'active' : ''}`}
+                    className={`mobile-menu-link ${isDropdownActive(item.dropdown) ? 'is-active' : ''}`}
                   >
-                    <div className="mobile-nav-content">
+                    <div className="mobile-menu-content">
                       <item.icon size={18} />
                       {item.name}
                     </div>
                     <ChevronDown
                       size={16}
-                      className={`mobile-dropdown-arrow ${mobileDropdown === item.name ? 'open' : ''}`}
+                      className={`mobile-dropdown-indicator ${mobileDropdown === item.name ? 'is-expanded' : ''}`}
                     />
                   </button>
-                  <div className={`mobile-dropdown ${mobileDropdown === item.name ? 'show' : ''}`}>
+                  <div className={`mobile-submenu ${mobileDropdown === item.name ? 'is-visible' : ''}`}>
                     {item.dropdown.map((subItem) => (
                       <Link
                         key={subItem.name}
                         to={subItem.href}
-                        className="mobile-dropdown-item"
+                        className="mobile-submenu-link"
                         onClick={() => handleLinkClick(subItem.href)}
                       >
                         {subItem.name}
@@ -469,7 +468,7 @@ const Navbar = ({ onToggleSidebar, sidebarVisible }) => {
               ) : (
                 <Link
                   to={item.href}
-                  className={`mobile-nav-link ${item.active ? 'active' : ''}`}
+                  className={`mobile-menu-link ${item.active ? 'is-active' : ''}`}
                   onClick={() => handleLinkClick(item.href)}
                 >
                   <item.icon size={18} />
