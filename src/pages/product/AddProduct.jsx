@@ -3,12 +3,12 @@ import {Formik, Form, Field, ErrorMessage, FieldArray} from 'formik';
 import {useNavigate} from 'react-router-dom';
 import AxiosServices from '../../components/network/AxiosServices.jsx';
 import ApiUrlServices from '../../components/network/ApiUrlServices.jsx';
-import CustomInput from "../../components/customInput/CustomInput.jsx";
-import CustomSubmitButton from "../../components/custombutton/CustomButton.jsx";
+import CustomButton from "../../components/customButton/CustomButton.jsx"; // Updated import
 import path from "../../routes/path.jsx";
 import {FaCloudUploadAlt, FaUpload} from "react-icons/fa";
 import CustomSelect from "../../components/customselect/CustomSelect.jsx";
-import CustomFileUploadWithPreview from "../../components/customfileupload/CustomFileUpload.jsx";
+import CustomFileUploadWithPreview from "../../components/customFileUpload/CustomFileUpload.jsx";
+import CustomInput from "../../components/customInput/CustomInput.jsx";
 
 const AddProduct = ({product, onSuccess, categoryList}) => {
 
@@ -31,7 +31,7 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
         team: product?.team || '',
         image: null,
         category_id: product?.category_id || "",
-        variants: [
+        variants: product?.variants?.length > 0 ? product.variants : [
             {color: '', size: '', stock: ''}
         ]
     };
@@ -44,13 +44,14 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
 
     const validate = (values) => {
         const errors = {};
-        if (!values.category_id.trim()) errors.category_id = 'Please select category';
+        if (!values.category_id.toString().trim()) errors.category_id = 'Please select category';
         if (!values.name.trim()) errors.name = 'Product name is required';
-        if (!values.price.trim()) errors.price = 'Product price is required';
+        if (!values.price.toString().trim()) errors.price = 'Product price is required';
         if (!values.team.trim()) errors.team = 'Team name is required';
         if (!values.role.trim()) errors.role = 'Role is required';
         if (!values.description.trim()) errors.description = 'Description is required';
         if (!product && !values.image) errors.image = 'Image is required';
+
         // Variants validation
         const variantErrors = [];
         values.variants.forEach((variant, index) => {
@@ -93,7 +94,7 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
             let response;
             if (product) {
                 // Update existing product
-                response = await AxiosServices.post(
+                response = await AxiosServices.put(
                     ApiUrlServices.UPDATE_PRODUCT(product.id),
                     formData,
                     true
@@ -160,6 +161,8 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                     name="name"
                                     label="Product name"
                                     placeholder="Enter product name"
+                                    labelClassName="signin-label"
+                                    inputClassName="signin-input"
                                 />
                             </div>
                             <div className="mb-3">
@@ -167,6 +170,8 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                     name="price"
                                     label="Product price"
                                     placeholder="Enter product price"
+                                    labelClassName="signin-label"
+                                    inputClassName="signin-input"
                                 />
                             </div>
                             <div className="mb-3">
@@ -174,6 +179,8 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                     name="team"
                                     label="Team name"
                                     placeholder="Enter team name"
+                                    labelClassName="signin-label"
+                                    inputClassName="signin-input"
                                 />
                             </div>
                             <div className="mb-3">
@@ -208,13 +215,13 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                 {/*<ErrorMessage name="image" component="div" className="error-message"/>*/}
                             </div>
 
-
                             <div className="mb-3">
                                 <CustomInput
                                     name="description"
                                     label="Product description"
                                     placeholder="Enter product description"
-                                    as="textarea"
+                                    labelClassName="signin-label"
+                                    inputClassName="signin-input"
                                 />
                             </div>
 
@@ -240,24 +247,36 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                                     <div style={{
                                                         display: 'flex',
                                                         justifyContent: 'space-between',
-                                                        alignItems: 'center'
+                                                        alignItems: 'center',
+                                                        marginBottom: '1rem'
                                                     }}>
                                                         <h5 style={{margin: 0}}>Product
                                                             Variant {isFirst ? '' : index}</h5>
-                                                        <div>
+                                                        <div style={{display: 'flex', gap: '0.5rem'}}>
                                                             {form.values.variants.length > 1 && (
-                                                                <CustomSubmitButton
+                                                                <CustomButton
                                                                     isLoading={loading}
                                                                     type="button"
                                                                     label="❌ Remove"
                                                                     onClick={() => remove(index)}
+                                                                    btnClassName="default-submit-btn signin-btn"
+                                                                    style={{
+                                                                        background: '#ef4444',
+                                                                        padding: '0.5rem 1rem',
+                                                                        fontSize: '0.875rem'
+                                                                    }}
                                                                 />
                                                             )}
-                                                            <CustomSubmitButton
+                                                            <CustomButton
                                                                 isLoading={loading}
                                                                 type="button"
                                                                 label="+ Add Variant"
                                                                 onClick={() => push({color: '', size: '', stock: ''})}
+                                                                btnClassName="default-submit-btn signin-btn"
+                                                                style={{
+                                                                    padding: '0.5rem 1rem',
+                                                                    fontSize: '0.875rem'
+                                                                }}
                                                             />
                                                         </div>
                                                     </div>
@@ -269,6 +288,8 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                                                 name={`variants[${index}].color`}
                                                                 label={`Color${suffix}`}
                                                                 placeholder="Enter color"
+                                                                labelClassName="signin-label"
+                                                                inputClassName="signin-input"
                                                             />
                                                         </div>
                                                         <div className="mb-3">
@@ -276,6 +297,8 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                                                 name={`variants[${index}].size`}
                                                                 label={`Size${suffix}`}
                                                                 placeholder="Enter size"
+                                                                labelClassName="signin-label"
+                                                                inputClassName="signin-input"
                                                             />
                                                         </div>
                                                         <div className="mb-3">
@@ -283,6 +306,8 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                                                 name={`variants[${index}].stock`}
                                                                 label={`Stock${suffix}`}
                                                                 placeholder="Enter stock"
+                                                                labelClassName="signin-label"
+                                                                inputClassName="signin-input"
                                                             />
                                                         </div>
                                                     </div>
@@ -293,11 +318,14 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                 )}
                             </FieldArray>
                         </div>
-                        <CustomSubmitButton
-                            isLoading={loading}
-                            type="submit"
-                            label={product ? "Update Product" : "Add Product"}
-                        />
+                        <div style={{display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '2rem'}}>
+                            <CustomButton
+                                isLoading={loading}
+                                type="submit"
+                                label={product ? "Update Product" : "Add Product"}
+                                btnClassName="default-submit-btn signin-btn"
+                            />
+                        </div>
                     </Form>
                 )}
             </Formik>
