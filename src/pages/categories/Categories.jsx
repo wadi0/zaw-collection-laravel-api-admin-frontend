@@ -10,22 +10,12 @@ import CustomButton from "../../components/customButton/CustomButton.jsx";
 import CustomTable from "../../components/customTable/CustomTable.jsx";
 
 const Categories = ({onDeleteCategory}) => {
-    // State for categories data from API
     const [categories, setCategories] = useState([]);
     const [loadingCategories, setLoadingCategories] = useState(true);
-
-    const [modalState, setModalState] = useState({
-        isOpen: false,
-        type: null,
-        category: null
-    });
+    const [modalState, setModalState] = useState({isOpen: false, type: null, category: null});
     const [loading, setLoading] = useState(false);
-
-    // Get context values
     const contextValue = useApp();
     const {isDarkMode, theme} = contextValue;
-
-    // Safe theme access
     const t = isDarkMode && theme?.dark ? theme.dark : theme?.light || {
         text: '#1e293b',
         bg: '#f8fafc',
@@ -40,7 +30,7 @@ const Categories = ({onDeleteCategory}) => {
     // Table columns configuration
     const tableColumns = [
         {
-            title: 'ID',
+            title: 'Id',
             key: 'id',
             type: 'text',
             align: 'center',
@@ -57,29 +47,16 @@ const Categories = ({onDeleteCategory}) => {
         }
     ];
 
-    // Fetch categories from API - WITHOUT pagination
     const fetchCategories = async () => {
         setLoadingCategories(true);
         try {
             const response = await AxiosServices.get(ApiUrlServices.All_CATEGORIES);
             console.log('Categories API Response:', response);
-
             let processedData = [];
-
-            if (response.data && Array.isArray(response.data)) {
-                // Direct array from Category::all()
-                processedData = response.data.map(category => ({
-                    id: category.id,
-                    name: category.name
-                }));
-            } else if (Array.isArray(response)) {
-                // Sometimes response comes directly as array
-                processedData = response.map(category => ({
-                    id: category.id,
-                    name: category.name
-                }));
-            }
-
+            processedData = response.data.map(category => ({
+                id: category.id,
+                name: category.name
+            }));
             setCategories(processedData);
 
         } catch (error) {
@@ -112,13 +89,11 @@ const Categories = ({onDeleteCategory}) => {
         try {
             let response;
             if (modalState.type === 'add') {
-                // Add new category
                 response = await AxiosServices.post(ApiUrlServices.ADD_CATEGORIES, payload);
                 console.log('Category added:', response);
             } else if (modalState.type === 'edit' && modalState.category) {
-                // Update existing category
                 payload.id = modalState.category.id;
-                response = await AxiosServices.put(`${ApiUrlServices.UPDATE_CATEGORIES}/${modalState.category.id}`, payload);
+                response = await AxiosServices.put(ApiUrlServices.UPDATE_CATEGORIES(modalState.category.id), payload);
                 console.log('Category updated:', response);
             }
 
@@ -136,12 +111,10 @@ const Categories = ({onDeleteCategory}) => {
     // Delete category handler
     const handleDeleteCategory = async (category) => {
         try {
-            await AxiosServices.delete(`${ApiUrlServices.DELETE_CATEGORIES}/${category.id}`);
+            await AxiosServices.delete(ApiUrlServices.DELETE_CATEGORIES(category.id))
             console.log('Category deleted:', category.id);
-
             // Refresh categories list after deletion
             await fetchCategories();
-
             // Call parent callback if provided
             if (onDeleteCategory) {
                 onDeleteCategory(category.id);
