@@ -39,7 +39,7 @@ const Categories = ({onDeleteCategory}) => {
         },
         {
             title: 'Category Name',
-            key: 'name',
+            key: 'category_name',
             type: 'text',
             primary: true,
             align: 'left',
@@ -55,7 +55,7 @@ const Categories = ({onDeleteCategory}) => {
             let processedData = [];
             processedData = response.data.map(category => ({
                 id: category.id,
-                name: category.name
+                category_name: category.category_name
             }));
             setCategories(processedData);
 
@@ -75,7 +75,7 @@ const Categories = ({onDeleteCategory}) => {
     // Form validation
     const validateCategoriesForm = (values) => {
         const errors = {};
-        if (!values.categories.trim()) errors.categories = 'Category name is required';
+        if (!values.category_name.trim()) errors.category_name = 'Category name is required';
         return errors;
     };
 
@@ -83,7 +83,7 @@ const Categories = ({onDeleteCategory}) => {
     const categoriesFormSubmit = async (values, {resetForm}) => {
         setLoading(true);
         let payload = {
-            name: values.categories
+            category_name: values.category_name
         };
 
         try {
@@ -158,7 +158,7 @@ const Categories = ({onDeleteCategory}) => {
 
     // Initial form values
     const getInitialValues = () => ({
-        categories: modalState.category?.name || ''
+        category_name: modalState.category?.category_name || ''
     });
 
     return (
@@ -239,7 +239,7 @@ const Categories = ({onDeleteCategory}) => {
                     <Form>
                         <div className="mb-3">
                             <CustomInput
-                                name="categories"
+                                name="category_name"
                                 label="Category name"
                                 placeholder="Enter category name"
                                 labelClassName="signin-label"

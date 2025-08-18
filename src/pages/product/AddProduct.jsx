@@ -151,7 +151,7 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                     label="Category"
                                     placeholder="Please select category"
                                     options={categoryList.map((item) => ({
-                                        label: item.name.toUpperCase(),
+                                        label: item.category_name.toUpperCase(),
                                         value: item.id,
                                     }))}
                                 />
