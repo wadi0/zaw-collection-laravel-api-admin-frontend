@@ -53,7 +53,7 @@ const Categories = ({onDeleteCategory}) => {
             const response = await AxiosServices.get(ApiUrlServices.All_CATEGORIES);
             console.log('Categories API Response:', response);
             let processedData = [];
-            processedData = response.data.map(category => ({
+            processedData = response.data.data.data.map(category => ({
                 id: category.id,
                 category_name: category.category_name
             }));

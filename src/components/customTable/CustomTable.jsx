@@ -82,9 +82,10 @@ const CustomTable = ({
                 );
 
             case 'currency':
+                const numericValue = parseFloat(value) || 0;
                 return (
                     <span style={{ color: t.primary, fontWeight: '600' }}>
-                        {column.currencySymbol || '$'}{value?.toLocaleString() || '0'}
+                        {column.currencySymbol || '$'}{numericValue.toLocaleString()}
                     </span>
                 );
 
@@ -97,32 +98,74 @@ const CustomTable = ({
 
             case 'image':
                 return value ? (
-                    <img
-                        src={value}
-                        alt="Item"
-                        style={{
-                            width: '40px',
-                            height: '40px',
-                            borderRadius: '50%',
-                            objectFit: 'cover'
-                        }}
-                    />
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <img
+                            src={value}
+                            alt="Product"
+                            style={{
+                                width: '60px',
+                                height: '60px',
+                                borderRadius: '8px',
+                                objectFit: 'cover',
+                                border: `2px solid ${t.border}`,
+                                boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
+                            }}
+                            onError={(e) => {
+                                // Handle broken images
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'flex';
+                            }}
+                        />
+                        <div style={{
+                            width: '60px',
+                            height: '60px',
+                            borderRadius: '8px',
+                            background: isDarkMode ? '#374151' : '#f3f4f6',
+                            display: 'none',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: t.textSec,
+                            fontSize: '0.75rem',
+                            border: `2px solid ${t.border}`
+                        }}>
+                            No Image
+                        </div>
+                    </div>
                 ) : (
                     <div style={{
-                        width: '40px',
-                        height: '40px',
-                        borderRadius: '50%',
-                        background: '#f3f4f6',
+                        width: '60px',
+                        height: '60px',
+                        borderRadius: '8px',
+                        background: isDarkMode ? '#374151' : '#f3f4f6',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
-                        color: '#9ca3af'
+                        color: t.textSec,
+                        fontSize: '0.75rem',
+                        border: `2px solid ${t.border}`,
+                        margin: '0 auto'
                     }}>
-                        N/A
+                        No Image
                     </div>
                 );
 
             default:
+                // Handle custom render function
+                if (column.render && typeof column.render === 'function') {
+                    return (
+                        <span style={{
+                            color: column.primary ? t.text : t.textSec,
+                            fontWeight: column.primary ? '500' : 'normal'
+                        }}>
+                            {column.render(value)}
+                        </span>
+                    );
+                }
+
                 return (
                     <span style={{
                         color: column.primary ? t.text : t.textSec,
@@ -303,7 +346,28 @@ const CustomTable = ({
                 textAlign: 'center',
                 color: t.textSec
             }}>
-                Loading...
+                <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '0.5rem'
+                }}>
+                    <div style={{
+                        width: '20px',
+                        height: '20px',
+                        border: `2px solid ${t.border}`,
+                        borderTop: `2px solid ${t.primary}`,
+                        borderRadius: '50%',
+                        animation: 'spin 1s linear infinite'
+                    }}></div>
+                    Loading...
+                </div>
+                <style>{`
+                    @keyframes spin {
+                        0% { transform: rotate(0deg); }
+                        100% { transform: rotate(360deg); }
+                    }
+                `}</style>
             </div>
         );
     }
@@ -394,7 +458,8 @@ const CustomTable = ({
                                         {columns.map((column, colIndex) => (
                                             <td key={colIndex} style={{
                                                 padding: '1rem',
-                                                textAlign: column.align || 'left'
+                                                textAlign: column.align || 'left',
+                                                verticalAlign: 'middle'
                                             }}>
                                                 {renderCellContent(item, column)}
                                             </td>
@@ -403,7 +468,8 @@ const CustomTable = ({
                                             <td style={{
                                                 padding: '1rem',
                                                 width: '120px',
-                                                minWidth: '120px'
+                                                minWidth: '120px',
+                                                verticalAlign: 'middle'
                                             }}>
                                                 <div style={{
                                                     display: 'flex',
