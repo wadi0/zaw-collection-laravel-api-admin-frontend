@@ -3,7 +3,7 @@ import {Formik, Form, Field, ErrorMessage, FieldArray} from 'formik';
 import {useNavigate} from 'react-router-dom';
 import AxiosServices from '../../components/network/AxiosServices.jsx';
 import ApiUrlServices from '../../components/network/ApiUrlServices.jsx';
-import CustomButton from "../../components/customButton/CustomButton.jsx"; // Updated import
+import CustomButton from "../../components/customButton/CustomButton.jsx";
 import path from "../../routes/path.jsx";
 import {FaCloudUploadAlt, FaUpload} from "react-icons/fa";
 import CustomSelect from "../../components/customselect/CustomSelect.jsx";
@@ -38,7 +38,8 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
 
     useEffect(() => {
         if (product?.image) {
-            setPreviewImage(`http://localhost:8000/storage/${product.image}`);
+            // Image is now a complete Cloudinary URL
+            setPreviewImage(product.image);
         }
     }, [product]);
 
@@ -70,56 +71,85 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
         return errors;
     };
 
-    const handleSubmit = async (values) => {
-        console.log(values)
-        setLoading(true);
-        const formData = new FormData();
-        formData.append('name', values.name);
-        formData.append('price', values.price);
-        formData.append('description', values.description);
-        formData.append('role', values.role);
-        formData.append('team', values.team);
-        formData.append('category_id', values.category_id);
-        if (values.image) {
-            formData.append('image', values.image);
+const handleSubmit = async (values) => {
+    console.log('Submitting values:', values)
+    setLoading(true);
+
+    // Validate at least one variant
+    const filteredVariants = values.variants.filter(
+        v => v.color.trim() && v.size.trim() && v.stock.toString().trim()
+    );
+    if (filteredVariants.length === 0) {
+        alert("Please add at least one variant");
+        setLoading(false);
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('name', values.name);
+    formData.append('price', values.price);
+    formData.append('description', values.description);
+    formData.append('role', values.role);
+    formData.append('team', values.team);
+    formData.append('category_id', values.category_id);
+
+    // Only append image if new file is selected
+    if (values.image) {
+        formData.append('image', values.image);
+    }
+
+    filteredVariants.forEach((variant, index) => {
+        formData.append(`variants[${index}][color]`, variant.color);
+        formData.append(`variants[${index}][size]`, variant.size);
+        formData.append(`variants[${index}][stock]`, variant.stock);
+    });
+
+    try {
+        let response;
+        if (product) {
+            // ✅ Add method spoofing for Laravel PUT request
+            formData.append('_method', 'PUT');
+            
+            // Use POST but Laravel will treat it as PUT
+            response = await AxiosServices.post(
+                ApiUrlServices.UPDATE_PRODUCT(product.id),
+                formData,
+                true // multipart/form-data
+            );
+        } else {
+            // Create new product
+            response = await AxiosServices.post(
+                ApiUrlServices.ADD_PRODUCT,
+                formData,
+                true // multipart/form-data
+            );
         }
 
-        values.variants.forEach((variant, index) => {
-            formData.append(`variants[${index}][color]`, variant.color);
-            formData.append(`variants[${index}][size]`, variant.size);
-            formData.append(`variants[${index}][stock]`, variant.stock);
-        });
+        console.log('Product saved successfully:', response.data);
+        alert(product ? 'Product updated successfully!' : 'Product created successfully!');
 
-        try {
-            let response;
-            if (product) {
-                // Update existing product
-                response = await AxiosServices.put(
-                    ApiUrlServices.UPDATE_PRODUCT(product.id),
-                    formData,
-                    true
-                );
-            } else {
-                // Create new product
-                response = await AxiosServices.post(
-                    ApiUrlServices.ADD_PRODUCT,
-                    formData,
-                    true
-                );
-            }
-
-            console.log('Product saved successfully:', response.data);
-            if (onSuccess) {
-                onSuccess();
-            } else {
-                navigate(path.home);
-            }
-        } catch (error) {
-            console.error('Error saving product:', error);
-        } finally {
-            setLoading(false);
+        if (onSuccess) {
+            onSuccess();
+        } else {
+            navigate(path.home);
         }
-    };
+    } catch (error) {
+        console.error('Error saving product:', error);
+
+        const errorMessage = error.response?.data?.message ||
+                             error.response?.data?.error ||
+                             'Failed to save product. Please try again.';
+
+        if (error.response?.data?.errors) {
+            const validationErrors = Object.values(error.response.data.errors).flat().join('\n');
+            alert(`Validation Errors:\n${validationErrors}`);
+        } else {
+            alert(errorMessage);
+        }
+    } finally {
+        setLoading(false);
+    }
+};
 
     const handleImageChange = (setFieldValue, file) => {
         setFieldValue('image', file);
@@ -130,7 +160,12 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
             };
             reader.readAsDataURL(file);
         } else {
-            setPreviewImage(null);
+            // If editing and no new file selected, keep the existing preview
+            if (product?.image) {
+                setPreviewImage(product.image);
+            } else {
+                setPreviewImage(null);
+            }
         }
     };
 
@@ -195,13 +230,13 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                 />
                             </div>
 
-                            <div className=" mb-3 mt-3">
+                            <div className="mb-3 mt-3">
                                 <CustomFileUploadWithPreview
                                     name="image"
                                     label="Product Image"
                                     labelClassName="my-label-class mb-2"
                                     className="my-custom-upload"
-                                    uploadText="Click to Upload"
+                                    uploadText="Click to Upload Product Image"
                                     accept="image/*"
                                     previewWidth={250}
                                     previewHeight={250}
@@ -211,6 +246,7 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                     multiple={false}
                                     enableCrop={false}
                                     aspect={1}
+                                    existingImageUrl={product?.image}
                                 />
                                 {/*<ErrorMessage name="image" component="div" className="error-message"/>*/}
                             </div>

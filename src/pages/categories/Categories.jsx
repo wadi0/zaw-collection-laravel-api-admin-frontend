@@ -50,7 +50,7 @@ const Categories = ({onDeleteCategory}) => {
     const fetchCategories = async () => {
         setLoadingCategories(true);
         try {
-            const response = await AxiosServices.get(ApiUrlServices.All_CATEGORIES);
+            const response = await AxiosServices.get(ApiUrlServices.ALL_CATEGORIES);
             console.log('Categories API Response:', response);
             let processedData = [];
             processedData = response.data.data.data.map(category => ({

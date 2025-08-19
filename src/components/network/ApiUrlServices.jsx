@@ -9,7 +9,7 @@ const ApiUrlServices = {
     DELETE_PRODUCT: (id) => `/products/${id}`,
     UPDATE_PRODUCT: (id) => `/products/${id}`,
     // categories api
-    All_CATEGORIES: "categories",
+    ALL_CATEGORIES: "categories",
     ADD_CATEGORIES: "categories",
     UPDATE_CATEGORIES: (id) => `/categories/${id}`,
     DELETE_CATEGORIES: (id) => `/categories/${id}`,
