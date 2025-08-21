@@ -269,41 +269,6 @@ const Products = ({ onDeleteProduct }) => {
         closeModal();
     };
 
-    // Show error message if there's an error
-    if (error) {
-        return (
-            <div style={{ padding: '1rem' }}>
-                <div style={{
-                    background: '#fef2f2',
-                    border: '1px solid #fecaca',
-                    color: '#dc2626',
-                    padding: '1rem',
-                    borderRadius: '8px',
-                    marginBottom: '1rem'
-                }}>
-                    {error}
-                    <button
-                        onClick={() => {
-                            setError(null);
-                            fetchCategories();
-                        }}
-                        style={{
-                            marginLeft: '1rem',
-                            background: '#dc2626',
-                            color: 'white',
-                            border: 'none',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '4px',
-                            cursor: 'pointer'
-                        }}
-                    >
-                        Retry
-                    </button>
-                </div>
-            </div>
-        );
-    }
-
     return (
         <div style={{ padding: '1rem' }}>
             {/* Header Section */}

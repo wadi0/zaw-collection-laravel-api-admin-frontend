@@ -16,6 +16,8 @@ const Categories = ({onDeleteCategory}) => {
     const [loading, setLoading] = useState(false);
     const contextValue = useApp();
     const {isDarkMode, theme} = contextValue;
+    const [pagination, setPagination] = useState(null);
+
     const t = isDarkMode && theme?.dark ? theme.dark : theme?.light || {
         text: '#1e293b',
         bg: '#f8fafc',
@@ -47,25 +49,56 @@ const Categories = ({onDeleteCategory}) => {
         }
     ];
 
-    const fetchCategories = async () => {
+    // Handle page change
+    const handlePageChange = (page) => {
+        fetchCategories(page, pagination?.per_page || 10);
+    };
+
+    // Handle per-page change
+    const handlePerPageChange = (perPage) => {
+        fetchCategories(1, perPage);
+    };
+
+    const fetchCategories = async (page = 1, perPage = 10) => {
         setLoadingCategories(true);
         try {
-            const response = await AxiosServices.get(ApiUrlServices.ALL_CATEGORIES);
+            const response = await AxiosServices.get(
+                `${ApiUrlServices.ALL_CATEGORIES}?page=${page}&per_page=${perPage}`
+            );
             console.log('Categories API Response:', response);
-            let processedData = [];
-            processedData = response.data.data.data.map(category => ({
-                id: category.id,
-                category_name: category.category_name
-            }));
-            setCategories(processedData);
+
+            if (response.data && response.data.data) {
+                const paginationData = response.data.data; // paginate object
+
+                const processedData = paginationData.data.map(category => ({
+                    id: category.id,
+                    category_name: category.category_name
+                }));
+
+                setCategories(processedData);
+
+                setPagination({
+                    current_page: paginationData.current_page,
+                    last_page: paginationData.last_page,
+                    per_page: paginationData.per_page,
+                    total: paginationData.total,
+                    from: paginationData.from,
+                    to: paginationData.to
+                });
+            } else {
+                setCategories([]);
+                setPagination(null);
+            }
 
         } catch (error) {
             console.error('Error fetching categories:', error);
             setCategories([]);
+            setPagination(null);
         } finally {
             setLoadingCategories(false);
         }
     };
+
 
     // Load categories on component mount
     useEffect(() => {
@@ -118,6 +151,9 @@ const Categories = ({onDeleteCategory}) => {
             // Call parent callback if provided
             if (onDeleteCategory) {
                 onDeleteCategory(category.id);
+            }
+            if (pagination) {
+                setPagination(prev => ({...prev, total: prev.total - 1}));
             }
         } catch (error) {
             console.error('Delete error:', error);
@@ -202,7 +238,6 @@ const Categories = ({onDeleteCategory}) => {
                 </button>
             </div>
 
-            {/* Custom Table - WITHOUT pagination */}
             <CustomTable
                 data={categories}
                 columns={tableColumns}
@@ -218,8 +253,9 @@ const Categories = ({onDeleteCategory}) => {
                 editPermission={true}
                 deletePermission={true}
                 viewPermission={false}
-                // NO pagination - table will not show pagination controls
-                pagination={null}
+                pagination={pagination}
+                onPageChange={handlePageChange}
+                onPerPageChange={handlePerPageChange}
             />
 
             {/* Modal with Direct Form */}
@@ -263,13 +299,6 @@ const Categories = ({onDeleteCategory}) => {
 };
 
 export default Categories;
-
-
-
-
-
-
-
 
 
 //  ata holo pagination with table ok

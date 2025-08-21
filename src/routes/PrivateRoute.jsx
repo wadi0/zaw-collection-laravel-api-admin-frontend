@@ -4,10 +4,13 @@ import { useApp } from "../context/AppContext.jsx";
 import path from "./path.jsx";
 
 const PrivateRoute = () => {
-    const { isLoggedIn } = useApp();
+    const { isLoggedIn, logout, user } = useApp();
     const location = useLocation();
 
-    console.log('PrivateRoute - isLoggedIn:', isLoggedIn);
+    if (!user?.token) {
+        logout();
+        return <Navigate to={path.signin} state={{ from: location }} replace />;
+    }
 
     return isLoggedIn ?
         <Outlet /> :

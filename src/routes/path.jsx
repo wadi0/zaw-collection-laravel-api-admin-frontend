@@ -1,7 +1,7 @@
 const path = {
     signin: "/sign-in",
     signup: "/sign-up",
-    home: "/",
+    home: "/dashboard",
     product: "product",
     categories: "categories",
 

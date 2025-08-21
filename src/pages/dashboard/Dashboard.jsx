@@ -88,7 +88,7 @@ const DashboardComponent = ({
 };
 
 // Demo usage
-const DashBoard = () => {
+const Dashboard = () => {
   const [isDarkMode, setIsDarkMode] = React.useState(false);
 
   const theme = {
@@ -135,4 +135,4 @@ const DashBoard = () => {
   );
 };
 
-export default DashBoard;
+export default Dashboard;

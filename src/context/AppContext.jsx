@@ -1,4 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, {createContext, useContext, useState, useEffect} from 'react';
+import ApiUrlServices from "../components/network/ApiUrlServices.jsx";
+import AxiosServices from "../components/network/AxiosServices.jsx";
 
 const AppContext = createContext();
 
@@ -10,20 +12,20 @@ export const useApp = () => {
     return context;
 };
 
-export const AppProvider = ({ children }) => {
+export const AppProvider = ({children}) => {
     // Check localStorage immediately for initial state
     const getInitialAuthState = () => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
             try {
                 const userData = JSON.parse(storedUser);
-                return { isLoggedIn: true, user: userData };
+                return {isLoggedIn: true, user: userData};
             } catch (error) {
                 localStorage.removeItem("user");
-                return { isLoggedIn: false, user: null };
+                return {isLoggedIn: false, user: null};
             }
         }
-        return { isLoggedIn: false, user: null };
+        return {isLoggedIn: false, user: null};
     };
 
     const initialAuth = getInitialAuthState();
@@ -36,11 +38,10 @@ export const AppProvider = ({ children }) => {
 
     // Modal state management (simplified)
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [sidebarOpen, setSidebarOpen] = useState(true);
-
+    const [sidebarOpen, setSidebarOpen] = useState(window.innerWidth > 768);
     // Check localStorage on app start - now only for debugging
     useEffect(() => {
-        console.log('AppContext - Initial state set:', { isLoggedIn, user });
+        console.log('AppContext - Initial state set:', {isLoggedIn, user});
     }, []);
 
     // Debug log whenever isLoggedIn changes
@@ -76,11 +77,17 @@ export const AppProvider = ({ children }) => {
         localStorage.setItem("user", JSON.stringify(userData));
     };
 
-    const logout = () => {
-        console.log('AppContext - Logout called');
-        setIsLoggedIn(false);
-        setUser(null);
-        localStorage.removeItem("user");
+    const logout = async () => {
+        if (!user?.token) return;
+        try {
+            await AxiosServices.post(ApiUrlServices.LOG_OUT);
+        } catch (error) {
+            console.error("Logout API failed:", error.response?.data || error.message);
+        } finally {
+            setIsLoggedIn(false);
+            setUser(null);
+            localStorage.removeItem("user");
+        }
     };
 
     // Modal functions (simplified)

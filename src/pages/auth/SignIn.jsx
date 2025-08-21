@@ -50,7 +50,7 @@ const SignIn = () => {
 
                     resetForm();
 
-                    // Navigate to admin dashboard instead of home
+                    // Navigate to admin dashboard instead of dashboard
                     navigate('/admin/dashboard');
                     // toast.success("Sign In Successfully.")
                 })
