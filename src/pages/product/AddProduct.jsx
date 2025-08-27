@@ -9,6 +9,7 @@ import {FaCloudUploadAlt, FaUpload} from "react-icons/fa";
 import CustomSelect from "../../components/customselect/CustomSelect.jsx";
 import CustomFileUploadWithPreview from "../../components/customFileUpload/CustomFileUpload.jsx";
 import CustomInput from "../../components/customInput/CustomInput.jsx";
+import {toast} from "react-toastify";
 
 const AddProduct = ({product, onSuccess, categoryList}) => {
 
@@ -71,85 +72,82 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
         return errors;
     };
 
-const handleSubmit = async (values) => {
-    console.log('Submitting values:', values)
-    setLoading(true);
+    const handleSubmit = async (values) => {
+        console.log('Submitting values:', values)
+        setLoading(true);
 
-    // Validate at least one variant
-    const filteredVariants = values.variants.filter(
-        v => v.color.trim() && v.size.trim() && v.stock.toString().trim()
-    );
-    if (filteredVariants.length === 0) {
-        alert("Please add at least one variant");
-        setLoading(false);
-        return;
-    }
-
-    const formData = new FormData();
-    formData.append('name', values.name);
-    formData.append('price', values.price);
-    formData.append('description', values.description);
-    formData.append('role', values.role);
-    formData.append('team', values.team);
-    formData.append('category_id', values.category_id);
-
-    // Only append image if new file is selected
-    if (values.image) {
-        formData.append('image', values.image);
-    }
-
-    filteredVariants.forEach((variant, index) => {
-        formData.append(`variants[${index}][color]`, variant.color);
-        formData.append(`variants[${index}][size]`, variant.size);
-        formData.append(`variants[${index}][stock]`, variant.stock);
-    });
-
-    try {
-        let response;
-        if (product) {
-            // ✅ Add method spoofing for Laravel PUT request
-            formData.append('_method', 'PUT');
-            
-            // Use POST but Laravel will treat it as PUT
-            response = await AxiosServices.post(
-                ApiUrlServices.UPDATE_PRODUCT(product.id),
-                formData,
-                true // multipart/form-data
-            );
-        } else {
-            // Create new product
-            response = await AxiosServices.post(
-                ApiUrlServices.ADD_PRODUCT,
-                formData,
-                true // multipart/form-data
-            );
+        // Validate at least one variant
+        const filteredVariants = values.variants.filter(
+            v => v.color.trim() && v.size.trim() && v.stock.toString().trim()
+        );
+        if (filteredVariants.length === 0) {
+            alert("Please add at least one variant");
+            setLoading(false);
+            return;
         }
 
-        console.log('Product saved successfully:', response.data);
-        alert(product ? 'Product updated successfully!' : 'Product created successfully!');
+        const formData = new FormData();
+        formData.append('name', values.name);
+        formData.append('price', values.price);
+        formData.append('description', values.description);
+        formData.append('role', values.role);
+        formData.append('team', values.team);
+        formData.append('category_id', values.category_id);
 
-        if (onSuccess) {
-            onSuccess();
-        } else {
-            navigate(path.home);
+        // Only append image if new file is selected
+        if (values.image) {
+            formData.append('image', values.image);
         }
-    } catch (error) {
-        console.error('Error saving product:', error);
 
-        const errorMessage = error.response?.data?.message ||
-                             error.response?.data?.error ||
-                             'Failed to save product. Please try again.';
+        filteredVariants.forEach((variant, index) => {
+            formData.append(`variants[${index}][color]`, variant.color);
+            formData.append(`variants[${index}][size]`, variant.size);
+            formData.append(`variants[${index}][stock]`, variant.stock);
+        });
 
-        if (error.response?.data?.errors) {
-            const validationErrors = Object.values(error.response.data.errors).flat().join('\n');
-            alert(`Validation Errors:\n${validationErrors}`);
-        } else {
-            alert(errorMessage);
+        try {
+            let response;
+            if (product) {
+                // ✅ Add method spoofing for Laravel PUT request
+                formData.append('_method', 'PUT');
+
+                // Use POST but Laravel will treat it as PUT
+                response = await AxiosServices.post(
+                    ApiUrlServices.UPDATE_PRODUCT(product.id),
+                    formData,
+                    true // multipart/form-data
+                );
+            } else {
+                // Create new product
+                response = await AxiosServices.post(
+                    ApiUrlServices.ADD_PRODUCT,
+                    formData,
+                    true // multipart/form-data
+                );
+            }
+
+            if (onSuccess) {
+                onSuccess();
+            } else {
+                navigate(path.home);
+            }
+            product ? toast.success('Product updated successfully.') : toast.success('Product created successfully.');
+        } catch (error) {
+
+            const errorMessage = error.response?.data?.message ||
+                error.response?.data?.error ||
+                'Failed to save product. Please try again.';
+
+            if (error.response?.data?.errors) {
+                const validationErrors = Object.values(error.response.data.errors).flat().join('\n');
+                toast.error(validationErrors)
+            } else {
+                toast.error(errorMessage)
+            }
+        } finally {
+            setLoading(false);
         }
-    } finally {
-        setLoading(false);
-    }
-};
+    };
 
     const handleImageChange = (setFieldValue, file) => {
         setFieldValue('image', file);
@@ -291,28 +289,19 @@ const handleSubmit = async (values) => {
                                                         <div style={{display: 'flex', gap: '0.5rem'}}>
                                                             {form.values.variants.length > 1 && (
                                                                 <CustomButton
-                                                                    isLoading={loading}
                                                                     type="button"
                                                                     label="❌ Remove"
                                                                     onClick={() => remove(index)}
                                                                     btnClassName="default-submit-btn signin-btn"
-                                                                    style={{
-                                                                        background: '#ef4444',
-                                                                        padding: '0.5rem 1rem',
-                                                                        fontSize: '0.875rem'
-                                                                    }}
+                                                                    disabled={loading}
                                                                 />
                                                             )}
                                                             <CustomButton
-                                                                isLoading={loading}
                                                                 type="button"
                                                                 label="+ Add Variant"
                                                                 onClick={() => push({color: '', size: '', stock: ''})}
                                                                 btnClassName="default-submit-btn signin-btn"
-                                                                style={{
-                                                                    padding: '0.5rem 1rem',
-                                                                    fontSize: '0.875rem'
-                                                                }}
+                                                                disabled={loading}
                                                             />
                                                         </div>
                                                     </div>

@@ -67,29 +67,12 @@
     background: #fafafa;
 
     .sidebar-brand {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
+      width: 100%;
+      text-align: center;
 
-      .brand-icon {
-        width: 32px;
-        height: 32px;
-        background: linear-gradient(45deg, #3b82f6, #1d4ed8);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-      }
-
-      .brand-text {
-        font-size: 1.1rem;
-        font-weight: 700;
-        color: #111827;
-        background: linear-gradient(45deg, #3b82f6, #1d4ed8);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+      .sidebar-logo {
+        width: 100px;
+        vertical-align: middle;
       }
     }
 
@@ -488,16 +471,6 @@
       background: #111827;
       border-bottom-color: #374151;
 
-      .sidebar-brand {
-        .brand-text {
-          color: #f9fafb;
-          background: linear-gradient(45deg, #60a5fa, #3b82f6);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-      }
-
       .sidebar-close-btn {
         color: #9ca3af;
 
@@ -747,19 +720,6 @@
 
     .sidebar-header {
       padding: 1rem 0.75rem;
-
-      .sidebar-brand {
-        gap: 0.5rem;
-
-        .brand-icon {
-          width: 28px;
-          height: 28px;
-        }
-
-        .brand-text {
-          font-size: 1rem;
-        }
-      }
     }
 
     .sidebar-nav {

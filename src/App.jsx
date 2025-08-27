@@ -26,30 +26,28 @@ const RedirectBasedOnAuth = () => {
 function App() {
     return (
         <AppProvider>
-            <Router>
-                <Routes>
-                    {/* Public Routes - Only accessible when NOT logged in */}
-                    <Route element={<PublicRoute/>}>
-                        <Route element={<AuthLayout/>}>
-                            <Route path={path.signin} element={<SignIn/>}/>
-                            <Route path={path.signup} element={<SignUp/>}/>
-                        </Route>
+            <Routes>
+                {/* Public Routes - Only accessible when NOT logged in */}
+                <Route element={<PublicRoute/>}>
+                    <Route element={<AuthLayout/>}>
+                        <Route path={path.signin} element={<SignIn/>}/>
+                        <Route path={path.signup} element={<SignUp/>}/>
                     </Route>
+                </Route>
 
-                    {/* Private Routes - Only accessible when logged in */}
-                    <Route element={<PrivateRoute/>}>
-                        <Route path="/" element={<MainLayout/>}>
-                            <Route index element={<Navigate to="/dashboard" replace/>}/>
-                            <Route path="dashboard" element={<Dashboard/>}/>
-                            <Route path={path.product} element={<Product/>}/>
-                            <Route path={path.categories} element={<Categories/>}/>
-                        </Route>
+                {/* Private Routes - Only accessible when logged in */}
+                <Route element={<PrivateRoute/>}>
+                    <Route path="/" element={<MainLayout/>}>
+                        <Route index element={<Navigate to="/dashboard" replace/>}/>
+                        <Route path="dashboard" element={<Dashboard/>}/>
+                        <Route path={path.product} element={<Product/>}/>
+                        <Route path={path.categories} element={<Categories/>}/>
                     </Route>
+                </Route>
 
-                    {/* Catch all route - redirect based on auth status */}
-                    <Route path="*" element={<RedirectBasedOnAuth/>}/>
-                </Routes>
-            </Router>
+                {/* Catch all route - redirect based on auth status */}
+                <Route path="*" element={<RedirectBasedOnAuth/>}/>
+            </Routes>
         </AppProvider>
     );
 }

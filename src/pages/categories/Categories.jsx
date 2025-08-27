@@ -8,6 +8,7 @@ import AxiosServices from "../../components/network/AxiosServices.jsx";
 import ApiUrlServices from "../../components/network/ApiUrlServices.jsx";
 import CustomButton from "../../components/customButton/CustomButton.jsx";
 import CustomTable from "../../components/customTable/CustomTable.jsx";
+import {toast} from "react-toastify";
 
 const Categories = ({onDeleteCategory}) => {
     const [categories, setCategories] = useState([]);
@@ -65,10 +66,9 @@ const Categories = ({onDeleteCategory}) => {
             const response = await AxiosServices.get(
                 `${ApiUrlServices.ALL_CATEGORIES}?page=${page}&per_page=${perPage}`
             );
-            console.log('Categories API Response:', response);
 
             if (response.data && response.data.data) {
-                const paginationData = response.data.data; // paginate object
+                const paginationData = response.data.data;
 
                 const processedData = paginationData.data.map(category => ({
                     id: category.id,
@@ -89,11 +89,12 @@ const Categories = ({onDeleteCategory}) => {
                 setCategories([]);
                 setPagination(null);
             }
+            toast.success("Categories fetch successfully.")
 
         } catch (error) {
-            console.error('Error fetching categories:', error);
             setCategories([]);
             setPagination(null);
+            toast.error("Something went wrong!")
         } finally {
             setLoadingCategories(false);
         }
@@ -123,11 +124,11 @@ const Categories = ({onDeleteCategory}) => {
             let response;
             if (modalState.type === 'add') {
                 response = await AxiosServices.post(ApiUrlServices.ADD_CATEGORIES, payload);
-                console.log('Category added:', response);
+                toast.success("Categories added successfully.")
             } else if (modalState.type === 'edit' && modalState.category) {
                 payload.id = modalState.category.id;
                 response = await AxiosServices.put(ApiUrlServices.UPDATE_CATEGORIES(modalState.category.id), payload);
-                console.log('Category updated:', response);
+                toast.success("Categories updated successfully.")
             }
 
             // Refresh categories list after successful operation
@@ -135,7 +136,7 @@ const Categories = ({onDeleteCategory}) => {
             resetForm();
             closeModal();
         } catch (error) {
-            console.error('Operation error:', error);
+            toast.error("Something went wrong!")
         } finally {
             setLoading(false);
         }
@@ -145,7 +146,6 @@ const Categories = ({onDeleteCategory}) => {
     const handleDeleteCategory = async (category) => {
         try {
             await AxiosServices.delete(ApiUrlServices.DELETE_CATEGORIES(category.id))
-            console.log('Category deleted:', category.id);
             // Refresh categories list after deletion
             await fetchCategories();
             // Call parent callback if provided
@@ -155,8 +155,9 @@ const Categories = ({onDeleteCategory}) => {
             if (pagination) {
                 setPagination(prev => ({...prev, total: prev.total - 1}));
             }
+            toast.warning("Categories deleted successfully!")
         } catch (error) {
-            console.error('Delete error:', error);
+            toast.error("Something went wrong!")
         }
     };
 

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import "./sidebar.scss"
 import path from "../routes/path.jsx";
+import logo from "../assets/logo.png";
 
 const Sidebar = ({isVisible, onClose}) => {
     const [activeAccordion, setActiveAccordion] = useState('');
@@ -130,10 +131,7 @@ const Sidebar = ({isVisible, onClose}) => {
             {/* Sidebar Header */}
             <div className="sidebar-header">
                 <div className="sidebar-brand">
-                    <div className="brand-icon">
-                        <Grid size={20}/>
-                    </div>
-                    <span className="brand-text">Admin Panel</span>
+                    <img className="sidebar-logo" src={logo}/>
                 </div>
                 <button
                     className="sidebar-close-btn"

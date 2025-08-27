@@ -6,6 +6,7 @@ import AxiosServices from "../../components/network/AxiosServices.jsx";
 import ApiUrlServices from "../../components/network/ApiUrlServices.jsx";
 import CustomTable from "../../components/customTable/CustomTable.jsx";
 import AddProduct from "./AddProduct.jsx";
+import {toast} from "react-toastify";
 
 const Products = ({ onDeleteProduct }) => {
     const [products, setProducts] = useState([]);
@@ -63,7 +64,8 @@ const Products = ({ onDeleteProduct }) => {
             type: 'text',
             primary: true,
             align: 'left',
-            width: '200px'
+            width: '200px',
+            render: (value) => value ? value.charAt(0).toUpperCase() + value.slice(1).toLowerCase() : 'N/A'
         },
         {
             title: 'Price',
@@ -119,13 +121,13 @@ const Products = ({ onDeleteProduct }) => {
         setError(null);
         try {
             const response = await AxiosServices.get(ApiUrlServices.ALL_CATEGORIES);
-            console.log('Categories API Response:', response);
             const categoriesData = response.data.data?.data || response.data.data || [];
             setCategories(categoriesData);
+            toast.success("Categories fetch successfully.")
         } catch (error) {
-            console.error('Error fetching categories:', error);
             setError('Failed to load categories');
             setCategories([]);
+            toast.success("Something went wrong!")
         } finally {
             setLoadingCategories(false);
         }
@@ -136,7 +138,6 @@ const Products = ({ onDeleteProduct }) => {
         setError(null);
         try {
             const response = await AxiosServices.get(`${ApiUrlServices.ALL_PRODUCT_LIST}?page=${page}&per_page=${perPage}`);
-            console.log('Products API Response:', response);
 
             // Extract pagination metadata and data from Laravel response
             const { data, current_page, last_page, per_page, total, from, to } = response.data;
@@ -144,13 +145,8 @@ const Products = ({ onDeleteProduct }) => {
             const processedData = data.map(product => {
                 const categoryName = categoryLookup[product.category_id] || 'N/A';
 
-                // ✅ Debug the image URL
-                console.log(`Product ID: ${product.id}, Raw Image URL: "${product.image}"`);
-                
                 // ✅ Ensure image URL is properly set
                 const imageUrl = product.image && product.image.trim() !== '' ? product.image : null;
-                
-                console.log(`Product ID: ${product.id}, Final Image URL: "${imageUrl}"`);
 
                 return {
                     id: product.id,
@@ -167,10 +163,6 @@ const Products = ({ onDeleteProduct }) => {
                 };
             });
 
-            // ✅ Debug processed data
-            console.log('Processed products data:', processedData);
-            console.log('First product image:', processedData[0]?.image);
-
             setProducts(processedData);
             setPagination({
                 current_page,
@@ -181,11 +173,13 @@ const Products = ({ onDeleteProduct }) => {
                 to
             });
 
+            toast.success("Product fetch successfully.")
+
         } catch (error) {
-            console.error('Error fetching products:', error);
             setError('Failed to load products: ' + (error.response?.data?.message || error.message));
             setProducts([]);
             setPagination(null);
+            toast.error("Something went wrong!")
         } finally {
             setLoadingProducts(false);
         }
@@ -207,14 +201,8 @@ const Products = ({ onDeleteProduct }) => {
   const handleDeleteProduct = async (product) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
         try {
-            console.log('Deleting product:', product.id);
-            console.log('Delete URL:', ApiUrlServices.DELETE_PRODUCT(product.id));
-            
             // ✅ Simple DELETE request
             const response = await AxiosServices.delete(ApiUrlServices.DELETE_PRODUCT(product.id));
-            
-            console.log('Delete response:', response);
-            alert('Product deleted successfully!');
 
             // Update UI
             setProducts(prevProducts => prevProducts.filter(p => p.id !== product.id));
@@ -223,14 +211,13 @@ const Products = ({ onDeleteProduct }) => {
                 setPagination(prev => ({ ...prev, total: prev.total - 1 }));
             }
 
+            toast.warning("Product deleted successfully.")
+
         } catch (error) {
-            console.error('Delete error details:', error);
-            console.error('Error response:', error.response);
-            
             const errorMessage = error.response?.data?.message || 
                                 error.response?.data?.error || 
                                 'Failed to delete product';
-            alert(errorMessage);
+            toast.error("Something went wrong!")
         }
     }
 };
@@ -241,7 +228,6 @@ const Products = ({ onDeleteProduct }) => {
 
     const handleViewProduct = (product) => {
         console.log('View product:', product);
-        // Implement view functionality here
     };
 
     const openModal = (type, product = null) => {
