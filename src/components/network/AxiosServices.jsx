@@ -2,7 +2,8 @@ import axios from 'axios';
 
 // ✅ Create Axios instance
 const apiClient = axios.create({
-  baseURL: 'http://127.0.0.1:8000/api/',
+  baseURL: 'https://e-commerce-api-create.onrender.com/api/',
+      // 'http://127.0.0.1:8000/api/',
   headers: {
     'Content-Type': 'application/json',
     Accept: 'application/json',
