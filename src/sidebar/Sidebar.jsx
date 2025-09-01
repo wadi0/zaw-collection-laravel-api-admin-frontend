@@ -41,7 +41,7 @@ const Sidebar = ({isVisible, onClose}) => {
             icon: ShoppingCart,
             // badge: '5',
             children: [
-                {id: 'all-orders', label: 'All Orders', path: '/admin/orders'},
+                {id: 'all-orders', label: 'All Orders', path: path.orders},
                 {id: 'pending-orders', label: 'Pending', path: '/admin/orders/pending'},
                 {id: 'completed-orders', label: 'Completed', path: '/admin/orders/completed'}
             ]

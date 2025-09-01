@@ -12,7 +12,7 @@ const path = {
     about: '/about',
     contact: '/contact',
     profile: '/profile',
-    orders: '/orders',
+    orders: 'orders',
     settings: '/settings',
     support: '/support',
 }

@@ -24,6 +24,16 @@ const ApiUrlServices = {
     DELETE_WISHLIST: (id) => `/wishlist/${id}`,
     // collection api
     All_COLLECTION: "collections",
-    TITLE_COLLECTION: (slug) => `collections/${slug}`
+    TITLE_COLLECTION: (slug) => `collections/${slug}`,
+    // Order Management APIs
+    ALL_ORDERS: "admin/orders",
+    SINGLE_ORDER_DETAILS: (id) => `admin/orders/${id}`,
+    UPDATE_ORDER_STATUS: (id) => `orders/${id}/status`,
+    PLACE_ORDER: "orders", // POST to create new order
+    
+    // Additional useful endpoints (if you want to add later)
+    ORDER_ANALYTICS: "orders/analytics",
+    ORDER_EXPORT: "orders/export",
+    ORDER_SEARCH: "orders/search",
 }
 export default ApiUrlServices

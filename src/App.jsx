@@ -12,6 +12,7 @@ import Product from "./pages/product/Product.jsx";
 import Categories from "./pages/categories/Categories.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import path from "./routes/path.jsx";
+import Orders from "./pages/orders/Orders.jsx";
 
 // Component to handle unknown routes based on auth status
 const RedirectBasedOnAuth = () => {
@@ -42,6 +43,7 @@ function App() {
                         <Route path="dashboard" element={<Dashboard/>}/>
                         <Route path={path.product} element={<Product/>}/>
                         <Route path={path.categories} element={<Categories/>}/>
+                        <Route path={path.orders} element={<Orders/>}/>
                     </Route>
                 </Route>
 
