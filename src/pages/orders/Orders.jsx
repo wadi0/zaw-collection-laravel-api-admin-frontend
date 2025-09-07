@@ -336,7 +336,7 @@ const Orders = () => {
         }}>
           Orders
         </h1>
-        <button
+        {/* <button
           onClick={fetchOrders}
           style={{
             background: t.gradient,
@@ -354,7 +354,7 @@ const Orders = () => {
           }}
         >
           <RefreshCw size={18} /> Refresh
-        </button>
+        </button> */}
       </div>
 
       {/* Error Message */}

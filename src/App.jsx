@@ -13,6 +13,7 @@ import Categories from "./pages/categories/Categories.jsx";
 import SignUp from "./pages/auth/SignUp.jsx";
 import path from "./routes/path.jsx";
 import Orders from "./pages/orders/Orders.jsx";
+import ComingSoon from './pages/comingSoon/ComingSoon.jsx';
 
 // Component to handle unknown routes based on auth status
 const RedirectBasedOnAuth = () => {
@@ -44,6 +45,18 @@ function App() {
                         <Route path={path.product} element={<Product/>}/>
                         <Route path={path.categories} element={<Categories/>}/>
                         <Route path={path.orders} element={<Orders/>}/>
+                        {/* coming soon page */}
+                        <Route path={path.pending} element={<ComingSoon/>}/>
+                        <Route path={path.completed} element={<ComingSoon/>}/>
+                        <Route path={path.shipped} element={<ComingSoon/>}/>
+                        <Route path={path.customer} element={<ComingSoon/>}/>
+                        <Route path={path.sales_reports} element={<ComingSoon/>}/>
+                        <Route path={path.analytics} element={<ComingSoon/>}/>
+                        <Route path={path.export_data} element={<ComingSoon/>}/>
+                        <Route path={path.shipping} element={<ComingSoon/>}/>
+                        <Route path={path.settings} element={<ComingSoon/>}/>
+                        <Route path={path.support} element={<ComingSoon/>}/>
+                        <Route path={path.notification} element={<ComingSoon/>}/>
                     </Route>
                 </Route>
 

@@ -13,8 +13,19 @@ const path = {
     contact: '/contact',
     profile: '/profile',
     orders: 'orders',
+
+
+    // don't have page comming soon dummy path
+    pending: '/pending',
+    completed: '/completed',
+    shipping: '/shipping',
+    customer: '/customer',
+    sales_reports: '/sales-reports',
+    analytics: '/analytics',
+    export_data: '/export-data',
     settings: '/settings',
     support: '/support',
+    notification: '/notification'
 }
 
 export default path;

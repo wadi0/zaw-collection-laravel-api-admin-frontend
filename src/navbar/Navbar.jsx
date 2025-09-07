@@ -198,28 +198,28 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
             icon: ShoppingCart,
             dropdown: [
                 {name: 'All Orders', href: `/${path.orders}`},
-                {name: 'Pending', href: `/${path.orders}/pending`},
-                {name: 'Shipped', href: `/${path.orders}/shipped`}
+                {name: 'Pending', href: path.pending},//href: `/${path.orders}/pending`},
+                {name: 'Completed', href:  path.completed},//`/${path.orders}/shipped`}
             ]
         },
         {
             name: 'Customers',
             icon: Users,
-            href: '/admin/customers',
+            href: path.customer,//'/admin/customers',
         },
         {
             name: 'Reports',
             icon: TrendingUp,
             dropdown: [
-                {name: 'Sales Report', href: '/admin/reports/sales'},
-                {name: 'Analytics', href: '/admin/reports/analytics'},
-                {name: 'Export Data', href: '/admin/reports/export'},
+                {name: 'Sales Report', href: path.sales_reports},//'/admin/reports/sales'},
+                {name: 'Analytics', href: path.analytics},//'/admin/reports/analytics'},
+                {name: 'Export Data', href: path.export_data},//'/admin/reports/export'},
             ]
         },
         {
             name: 'Shipping',
             icon: Truck,
-            href: '/admin/shipping',
+            href: path.shipping,//'/admin/shipping',
         }
     ];
 
@@ -434,11 +434,12 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
                                             <div className={`notification-icon status-${notification.type}`}>
                                                 <notification.icon size={16}/>
                                             </div>
-                                            <div className="notification-content">
+                                            {/* <div className="notification-content">
                                                 <p className="notification-title">{notification.title}</p>
                                                 <p className="notification-message">{notification.message}</p>
                                                 <p className="notification-time">{notification.time}</p>
-                                            </div>
+                                            </div> */}
+                                            Coming soon
                                         </div>
                                     ))}
                                 </div>
