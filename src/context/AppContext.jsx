@@ -78,17 +78,33 @@ export const AppProvider = ({children}) => {
     };
 
     const logout = async () => {
-        if (!user?.token) return;
-        try {
+    try {
+        if (user?.token) {
             await AxiosServices.post(ApiUrlServices.LOG_OUT);
-        } catch (error) {
-            console.error("Logout API failed:", error.response?.data || error.message);
-        } finally {
-            setIsLoggedIn(false);
-            setUser(null);
-            localStorage.removeItem("user");
         }
-    };
+    } catch (error) {
+        console.error("Logout API failed:", error.response?.data || error.message);
+    } finally {
+        // Clear everything immediately
+        setIsLoggedIn(false);
+        setUser(null);
+        localStorage.removeItem("user");
+        
+    }
+};
+
+    // const logout = async () => {
+    //     if (!user?.token) return;
+    //     try {
+    //         await AxiosServices.post(ApiUrlServices.LOG_OUT);
+    //     } catch (error) {
+    //         console.error("Logout API failed:", error.response?.data || error.message);
+    //     } finally {
+    //         setIsLoggedIn(false);
+    //         setUser(null);
+    //         localStorage.removeItem("user");
+    //     }
+    // };
 
     // Modal functions (simplified)
     const openModal = () => {

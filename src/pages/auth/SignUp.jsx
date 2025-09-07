@@ -8,6 +8,7 @@ import ApiUrlServices from "../../components/network/ApiUrlServices.jsx";
 import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext.jsx";
 import path from "../../routes/path.jsx";
+import zawlogo from "../../assets/logo.png";
 
 const SignUp = () => {
     const [loading, setLoading] = useState(false);
@@ -66,21 +67,11 @@ const SignUp = () => {
         <div className={`signIn_container ${isDarkMode ? 'dark-mode' : ''}`}>
             <div className="signin-card">
                 <div className="image">
-                    <div className='img' style={{
-                        width: '80px',
-                        height: '80px',
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                        borderRadius: '50%',
-                        margin: '0 auto',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        color: 'white',
-                        fontSize: '2rem',
-                        fontWeight: 'bold'
-                    }}>
-                        S
-                    </div>
+                    <img
+                        src={zawlogo}
+                        alt="Logo"
+                        className='img'
+                    />
                 </div>
                 <div className="signin-content">
                     <h2 className="signin-title">Sign Up your account</h2>

@@ -74,19 +74,8 @@
     text-align: center;
     margin-bottom: 1.5rem;
 
-    .img, .logo-placeholder {
-      width: 80px;
-      height: 80px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 50%;
-      margin: 0 auto;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-size: 2rem;
-      font-weight: bold;
-      object-fit: cover;
+    .img {
+      width: 100px;
     }
   }
 }

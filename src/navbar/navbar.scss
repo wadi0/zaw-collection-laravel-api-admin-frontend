@@ -4,18 +4,27 @@ button {
   border: none !important;
   box-shadow: none !important;
 
-  // All SVG icons inside buttons should not interfere with button clicks
   svg {
     pointer-events: none;
-    cursor: inherit; // Inherit cursor from parent button
+    cursor: inherit;
   }
 
-  &:focus, &:active, &:focus-visible {
+  &:focus,
+  &:active,
+  &:focus-visible {
     outline: none !important;
     border: none !important;
     box-shadow: none !important;
   }
 }
+
+// Simple color variables
+$primary-blue: #3b82f6;
+$light-blue: #60a5fa;
+$gray: #6b7280;
+$light-gray: #9ca3af;
+$whitesmoke: #f5f5f5;
+$border-gray: #e5e7eb;
 
 // Main Navbar Styles
 .custom-navbar {
@@ -23,7 +32,7 @@ button {
   top: 0;
   left: 0;
   right: 0;
-  height: 70px; // Fixed height for all screen sizes
+  height: 70px;
   z-index: 1000;
   box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(20px);
@@ -53,7 +62,6 @@ button {
     align-items: center;
     justify-content: center;
 
-    // Ensure icon doesn't interfere with button click
     svg {
       pointer-events: none !important;
       cursor: pointer !important;
@@ -61,18 +69,18 @@ button {
   }
 
   .brand-logo {
-  .navbar-logo {
-    height: 40px;
+    .navbar-logo {
+      height: 40px;
 
-    &:focus,
-    &:active,
-    &:focus-visible {
-      outline: none !important;
-      border: none !important;
-      box-shadow: none !important;
+      &:focus,
+      &:active,
+      &:focus-visible {
+        outline: none !important;
+        border: none !important;
+        box-shadow: none !important;
+      }
     }
   }
-}
 
   .navigation-menu {
     display: flex;
@@ -98,32 +106,22 @@ button {
       cursor: pointer;
       font-size: 14px;
       position: relative;
-      overflow: hidden;
 
-      // Icons inside nav links should not interfere
       svg {
         pointer-events: none !important;
       }
 
-      &::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-        transition: left 0.3s ease;
-        z-index: -1;
+      &:hover {
+        // transform: translateY(-1px);
+        background: $primary-blue !important;
+        color: white;
       }
 
-      &:hover, &.is-active {
-        transform: translateY(-1px);
+      &.is-active {
+        background: $primary-blue;
         color: white;
-
-        &::before {
-          left: 0;
-        }
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+        font-weight: 600;
       }
 
       .dropdown-indicator {
@@ -149,9 +147,8 @@ button {
       min-width: 180px;
       z-index: 9999;
 
-      // Arrow indicator pointing to parent menu
       &::before {
-        content: '';
+        content: "";
         position: absolute;
         top: -6px;
         left: 20px;
@@ -173,6 +170,7 @@ button {
         text-decoration: none;
         transition: all 0.2s ease;
         font-size: 14px;
+        position: relative;
 
         &:first-child {
           border-radius: 8px 8px 0 0;
@@ -183,7 +181,16 @@ button {
         }
 
         &:hover {
-          transform: translateX(2px);
+          // transform: translateX(2px);
+          background: $primary-blue !important;
+          color: white;
+        }
+
+        &.is-active {
+          background: $primary-blue;
+          color: white;
+          font-weight: 600;
+          border-left: 3px solid $primary-blue;
         }
       }
     }
@@ -209,7 +216,8 @@ button {
         font-size: 14px;
       }
 
-      .search-submit-button, .search-close-button {
+      .search-submit-button,
+      .search-close-button {
         border: none;
         padding: 8px;
         border-radius: 4px;
@@ -260,7 +268,8 @@ button {
         font-size: 14px;
       }
 
-      .mobile-search-button, .mobile-search-close {
+      .mobile-search-button,
+      .mobile-search-close {
         border: none;
         padding: 8px 10px;
         border-radius: 4px;
@@ -298,10 +307,6 @@ button {
     svg {
       pointer-events: none !important;
     }
-
-    &:hover {
-      transform: translateY(-1px);
-    }
   }
 
   .notification-trigger {
@@ -326,7 +331,7 @@ button {
     position: relative;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       top: calc(100% + 6px);
       right: 20px;
@@ -469,7 +474,7 @@ button {
     position: relative;
 
     &::before {
-      content: '';
+      content: "";
       position: absolute;
       top: calc(100% + 6px);
       right: 12px;
@@ -501,7 +506,7 @@ button {
     .user-avatar {
       width: 32px;
       height: 32px;
-      background: linear-gradient(45deg, #667eea, #764ba2);
+      background: $gray;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -589,62 +594,81 @@ button {
 
   // Light Theme
   &.theme-light {
-    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    background: linear-gradient(135deg, #ffffff, $whitesmoke);
     color: #1f2937;
 
-    .navbar-start, .sidebar-toggle-btn, .menu-link, .action-button, .mobile-toggle {
+    .navbar-start,
+    .sidebar-toggle-btn,
+    .menu-link,
+    .action-button,
+    .mobile-toggle {
       color: #1f2937;
     }
 
     .menu-link {
-      color: #6b7280;
+      color: $gray;
 
-      &:hover, &.is-active {
+      &:hover {
+        background: $light-gray;
+        color: #ffffff;
+      }
+
+      &.is-active {
+        background: $primary-blue;
         color: #ffffff;
       }
     }
 
-    .submenu-dropdown, .profile-popup, .notification-popup {
+    .submenu-dropdown,
+    .profile-popup,
+    .notification-popup {
       background: #ffffff;
       color: #1f2937;
-      border: 1px solid rgba(0, 0, 0, 0.1);
+      border: 1px solid $border-gray;
 
-      // Arrow color for navigation dropdown only
       &.submenu-dropdown::before {
         background: #ffffff;
         box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.1);
-        border-left: 1px solid rgba(0, 0, 0, 0.1);
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        border-left: 1px solid $border-gray;
+        border-top: 1px solid $border-gray;
       }
 
-      .submenu-link, .profile-link {
+      .submenu-link,
+      .profile-link {
         color: #374151;
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
         &:hover {
-          background-color: #f9fafb;
+          background-color: $whitesmoke;
         }
 
         &:last-child {
           border-bottom: none;
         }
+
+        &.is-active {
+          background: $primary-blue;
+          color: white;
+          font-weight: 600;
+          border-left: 3px solid $primary-blue;
+        }
       }
 
       .profile-info {
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        border-bottom: 1px solid $border-gray;
 
         .user-name {
           color: #111827;
         }
 
         .user-email {
-          color: #6b7280;
+          color: $gray;
         }
       }
 
       .notification-header {
-        background: #f9fafb;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        background: $whitesmoke;
+        border-bottom: 1px solid $border-gray;
 
         h3 {
           color: #111827;
@@ -655,7 +679,7 @@ button {
         border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 
         &:hover {
-          background-color: #f9fafb;
+          background-color: $whitesmoke;
         }
 
         &:last-child {
@@ -667,20 +691,20 @@ button {
         }
 
         .notification-message {
-          color: #6b7280;
+          color: $gray;
         }
 
         .notification-time {
-          color: #9ca3af;
+          color: $light-gray;
         }
       }
 
       .notification-footer {
-        background: #f9fafb;
-        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        background: $whitesmoke;
+        border-top: 1px solid $border-gray;
 
         .view-all-link {
-          color: #3b82f6;
+          color: $primary-blue;
 
           &:hover {
             color: #1d4ed8;
@@ -689,19 +713,18 @@ button {
       }
     }
 
-    // Triangle arrows for notification and profile dropdowns
     .notification-panel.is-open::before {
       background: #ffffff;
       box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.1);
-      border-left: 1px solid rgba(0, 0, 0, 0.1);
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      border-left: 1px solid $border-gray;
+      border-top: 1px solid $border-gray;
     }
 
     .profile-panel.is-open::before {
       background: #ffffff;
       box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.1);
-      border-left: 1px solid rgba(0, 0, 0, 0.1);
-      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      border-left: 1px solid $border-gray;
+      border-top: 1px solid $border-gray;
     }
 
     .search-bar-expanded .search-field-wrapper {
@@ -711,11 +734,12 @@ button {
         color: #1f2937;
 
         &::placeholder {
-          color: #9ca3af;
+          color: $light-gray;
         }
       }
 
-      .search-submit-button, .search-close-button {
+      .search-submit-button,
+      .search-close-button {
         background: rgba(0, 0, 0, 0.05);
         color: #1f2937;
 
@@ -726,8 +750,8 @@ button {
     }
 
     .mobile-search-panel {
-        box-shadow: 0 4px 4px -2px rgba(0,0,0,0.3);
-      background: linear-gradient(135deg, #ffffff, #f8fafc);
+      box-shadow: 0 4px 4px -2px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, #ffffff, $whitesmoke);
 
       .mobile-search-wrapper {
         background: rgba(0, 0, 0, 0.05);
@@ -736,11 +760,12 @@ button {
           color: #1f2937;
 
           &::placeholder {
-            color: #9ca3af;
+            color: $light-gray;
           }
         }
 
-        .mobile-search-button, .mobile-search-close {
+        .mobile-search-button,
+        .mobile-search-close {
           background: rgba(0, 0, 0, 0.05);
           color: #1f2937;
 
@@ -760,7 +785,9 @@ button {
       }
     }
 
-    .profile-trigger:hover, .sidebar-toggle-btn:hover, .mobile-toggle:hover {
+    .profile-trigger:hover,
+    .sidebar-toggle-btn:hover,
+    .mobile-toggle:hover {
       background: rgba(0, 0, 0, 0.05);
     }
   }
@@ -770,24 +797,35 @@ button {
     background: linear-gradient(135deg, #0f172a, #1e293b);
     color: #ffffff;
 
-    .navbar-start, .sidebar-toggle-btn, .menu-link, .action-button, .mobile-toggle {
+    .navbar-start,
+    .sidebar-toggle-btn,
+    .menu-link,
+    .action-button,
+    .mobile-toggle {
       color: #ffffff;
     }
 
     .menu-link {
       color: rgba(255, 255, 255, 0.8);
 
-      &:hover, &.is-active {
+      &:hover {
+        background: $gray;
+        color: #ffffff;
+      }
+
+      &.is-active {
+        background: $light-blue;
         color: #ffffff;
       }
     }
 
-    .submenu-dropdown, .profile-popup, .notification-popup {
+    .submenu-dropdown,
+    .profile-popup,
+    .notification-popup {
       background: #1e293b;
       color: #ffffff;
       border: 1px solid rgba(255, 255, 255, 0.1);
 
-      // Arrow color for navigation dropdown only
       &.submenu-dropdown::before {
         background: #1e293b;
         box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.3);
@@ -795,7 +833,8 @@ button {
         border-top: 1px solid rgba(255, 255, 255, 0.1);
       }
 
-      .submenu-link, .profile-link {
+      .submenu-link,
+      .profile-link {
         color: #e2e8f0;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 
@@ -805,6 +844,13 @@ button {
 
         &:last-child {
           border-bottom: none;
+        }
+
+        &.is-active {
+          background: $light-blue;
+          color: white;
+          font-weight: 600;
+          border-left: 3px solid $light-blue;
         }
       }
 
@@ -858,16 +904,15 @@ button {
         border-top: 1px solid rgba(255, 255, 255, 0.1);
 
         .view-all-link {
-          color: #60a5fa;
+          color: $light-blue;
 
           &:hover {
-            color: #3b82f6;
+            color: $primary-blue;
           }
         }
       }
     }
 
-    // Triangle arrows for notification and profile dropdowns
     .notification-panel.is-open::before {
       background: #1e293b;
       box-shadow: -2px -2px 4px rgba(0, 0, 0, 0.3);
@@ -893,7 +938,8 @@ button {
         }
       }
 
-      .search-submit-button, .search-close-button {
+      .search-submit-button,
+      .search-close-button {
         background: rgba(255, 255, 255, 0.1);
         color: #ffffff;
 
@@ -918,7 +964,8 @@ button {
           }
         }
 
-        .mobile-search-button, .mobile-search-close {
+        .mobile-search-button,
+        .mobile-search-close {
           background: rgba(255, 255, 255, 0.1);
           color: #ffffff;
 
@@ -942,11 +989,11 @@ button {
 // Mobile Navigation
 .mobile-navigation {
   position: fixed;
-  top: 70px; // Fixed to match navbar height
+  top: 70px;
   left: 0;
   right: 0;
-  padding: 0 20px;
-  max-height: calc(100vh - 70px); // Fixed to match navbar height
+  padding: 20px;
+  max-height: calc(100vh - 70px);
   z-index: 9997;
   box-shadow: 0px 4px 4px -2px rgba(0, 0, 0, 0.3);
 
@@ -963,6 +1010,7 @@ button {
       transition: all 0.3s ease;
       font-size: 16px;
       gap: 15px;
+      position: relative;
 
       .mobile-menu-content {
         display: flex;
@@ -974,8 +1022,17 @@ button {
         }
       }
 
-      &:hover, &.is-active {
+      &:hover {
         transform: translateX(2px);
+        background: $light-gray;
+        color: white;
+      }
+
+      &.is-active {
+        background: $primary-blue;
+        color: white;
+        font-weight: 600;
+        border-left: 4px solid $primary-blue;
       }
     }
 
@@ -992,6 +1049,11 @@ button {
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.4s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding-left: 20px;
+      padding-top: 5px;
 
       &.is-visible {
         max-height: 300px;
@@ -1001,23 +1063,34 @@ button {
         display: block;
         padding: 12px 20px 12px 52px;
         text-decoration: none;
-        transition: all 0.3s ease;
+        transition: background-color 0.2s ease;
         font-size: 14px;
+
+        &:hover {
+          background: $primary-blue;
+          color: #ffffff;
+        }
+
+        &.is-active {
+          background: $primary-blue;
+          color: #ffffff;
+          font-weight: 600;
+        }
       }
     }
   }
 
   &.theme-light {
-    background: linear-gradient(135deg, #ffffff, #f8fafc);
+    background: linear-gradient(135deg, #ffffff, $whitesmoke);
 
     .mobile-menu-item {
       .mobile-menu-link {
         color: #374151;
 
-        &:hover, &.is-active {
-          background: rgba(0, 0, 0, 0.05);
+        &:hover,
+        &.is-active {
           border-radius: 6px;
-          color: #111827;
+          color: white;
         }
       }
 
@@ -1027,10 +1100,10 @@ button {
         .mobile-submenu-link {
           color: #374151;
 
-          &:hover {
-            background: rgba(0, 0, 0, 0.05);
+          &:hover,
+          &.is-active {
             border-radius: 6px;
-            color: #111827;
+            color: white;
           }
         }
       }
@@ -1044,8 +1117,8 @@ button {
       .mobile-menu-link {
         color: rgba(255, 255, 255, 0.8);
 
-        &:hover, &.is-active {
-          background: rgba(255, 255, 255, 0.1);
+        &:hover,
+        &.is-active {
           color: #ffffff;
         }
       }
@@ -1056,8 +1129,8 @@ button {
         .mobile-submenu-link {
           color: rgba(255, 255, 255, 0.7);
 
-          &:hover {
-            background: rgba(255, 255, 255, 0.1);
+          &:hover,
+          &.is-active {
             color: #ffffff;
           }
         }
@@ -1137,9 +1210,10 @@ button {
       flex-shrink: 0;
     }
 
-    .notification-popup, .profile-popup {
+    .notification-popup,
+    .profile-popup {
       position: fixed;
-      top: 70px; // Fixed to match navbar height
+      top: 70px;
       z-index: 9999;
     }
 
@@ -1177,14 +1251,14 @@ button {
       right: 8px;
       min-width: 260px;
       max-width: calc(100vw - 16px);
-      top: 70px; // Fixed to match navbar height
+      top: 70px;
     }
 
     .profile-popup {
       right: 8px;
       min-width: 160px;
       max-width: calc(100vw - 16px);
-      top: 70px; // Fixed to match navbar height
+      top: 70px;
     }
   }
 }
@@ -1213,8 +1287,9 @@ button {
       flex-shrink: 0;
     }
 
-    .notification-popup, .profile-popup {
-      top: 70px; // Fixed to match navbar height
+    .notification-popup,
+    .profile-popup {
+      top: 70px;
     }
 
     .notification-popup {
@@ -1231,8 +1306,8 @@ button {
   }
 
   .mobile-navigation {
-    top: 70px; // Fixed to match navbar height
-    max-height: calc(100vh - 70px); // Fixed to match navbar height
+    top: 70px;
+    max-height: calc(100vh - 70px);
 
     .mobile-menu-item {
       .mobile-menu-link {
@@ -1248,188 +1323,6 @@ button {
         .mobile-submenu-link {
           padding: 8px 10px 8px 40px;
           font-size: 12px;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 400px) {
-  .custom-navbar {
-    .navbar-wrapper {
-      padding: 0 4px;
-      gap: 3px;
-    }
-
-    .navbar-end {
-      gap: 4px;
-      min-width: fit-content;
-    }
-
-    .action-button {
-      width: 30px;
-      height: 30px;
-      flex-shrink: 0;
-    }
-
-    .navbar-start {
-      gap: 5px;
-      flex-shrink: 0;
-    }
-
-    .notification-popup {
-      right: 4px;
-      min-width: 220px;
-      max-width: calc(100vw - 8px);
-      top: 70px; // Fixed to match navbar height
-    }
-
-    .profile-popup {
-      right: 4px;
-      min-width: 140px;
-      max-width: calc(100vw - 8px);
-      top: 70px; // Fixed to match navbar height
-    }
-  }
-
-  .mobile-navigation {
-    top: 70px; // Fixed to match navbar height
-    max-height: calc(100vh - 70px); // Fixed to match navbar height
-
-    .mobile-menu-item {
-      .mobile-menu-link {
-        padding: 10px 8px;
-        font-size: 13px;
-      }
-
-      .mobile-submenu {
-        .mobile-submenu-link {
-          padding: 8px 8px 8px 36px;
-          font-size: 12px;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 360px) {
-  .custom-navbar {
-    .navbar-wrapper {
-      padding: 0 3px;
-      gap: 2px;
-    }
-
-    .navbar-end {
-      gap: 3px;
-      min-width: fit-content;
-    }
-
-    .action-button {
-      width: 28px;
-      height: 28px;
-      flex-shrink: 0;
-    }
-
-    .navbar-start {
-      gap: 4px;
-      flex-shrink: 0;
-    }
-
-    .notification-popup {
-      right: 3px;
-      min-width: 200px;
-      max-width: calc(100vw - 6px);
-      top: 70px; // Fixed to match navbar height
-    }
-
-    .profile-popup {
-      right: 3px;
-      min-width: 120px;
-      max-width: calc(100vw - 6px);
-      top: 70px; // Fixed to match navbar height
-    }
-  }
-
-  .mobile-navigation {
-    top: 70px; // Fixed to match navbar height
-    max-height: calc(100vh - 70px); // Fixed to match navbar height
-
-    .mobile-menu-item {
-      .mobile-menu-link {
-        padding: 10px 6px;
-        font-size: 12px;
-
-        .mobile-menu-content {
-          gap: 6px;
-        }
-      }
-
-      .mobile-submenu {
-        .mobile-submenu-link {
-          padding: 6px 6px 6px 32px;
-          font-size: 11px;
-        }
-      }
-    }
-  }
-}
-
-@media (max-width: 320px) {
-  .custom-navbar {
-    .navbar-wrapper {
-      padding: 0 2px;
-      gap: 2px;
-    }
-
-    .navbar-end {
-      gap: 2px;
-      min-width: fit-content;
-    }
-
-    .action-button {
-      width: 26px;
-      height: 26px;
-      flex-shrink: 0;
-    }
-
-    .navbar-start {
-      gap: 3px;
-      flex-shrink: 0;
-    }
-
-    .notification-popup {
-      right: 2px;
-      min-width: 180px;
-      max-width: calc(100vw - 4px);
-      top: 70px; // Fixed to match navbar height
-    }
-
-    .profile-popup {
-      right: 2px;
-      min-width: 110px;
-      max-width: calc(100vw - 4px);
-      top: 70px; // Fixed to match navbar height
-    }
-  }
-
-  .mobile-navigation {
-    top: 70px; // Fixed to match navbar height
-    max-height: calc(100vh - 70px); // Fixed to match navbar height
-
-    .mobile-menu-item {
-      .mobile-menu-link {
-        padding: 8px 4px;
-        font-size: 11px;
-
-        .mobile-menu-content {
-          gap: 4px;
-        }
-      }
-
-      .mobile-submenu {
-        .mobile-submenu-link {
-          padding: 6px 4px 6px 28px;
-          font-size: 10px;
         }
       }
     }

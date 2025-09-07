@@ -1,21 +1,71 @@
+
 import React, {useState, useEffect} from 'react';
 import {useNavigate, useLocation} from 'react-router-dom';
 import {useApp} from '../context/AppContext';
 import {
-    X, BarChart3, Package, Grid, UserCircle, Settings, LogOut,
+    X, Package, Settings,
     ChevronDown, ChevronRight, Home, Users, ShoppingCart,
-    FileText, Bell, HelpCircle, Star, TrendingUp, Boxes, Truck
+    Bell, HelpCircle, TrendingUp, Truck
 } from 'lucide-react';
 import "./sidebar.scss"
 import path from "../routes/path.jsx";
-import logo from "../assets/logo.png";
 
 const Sidebar = ({isVisible, onClose}) => {
     const [activeAccordion, setActiveAccordion] = useState('');
-    const [collapsedGroups, setCollapsedGroups] = useState(new Set());
-    const {isDarkMode, logout} = useApp();
+    const {isDarkMode} = useApp();
     const navigate = useNavigate();
     const location = useLocation();
+
+    // Helper function to normalize paths for comparison
+    const normalizePath = (pathStr) => {
+        if (!pathStr) return '';
+
+        // Handle relative paths by converting them to absolute
+        if (!pathStr.startsWith('/')) {
+            return `/${pathStr}`;
+        }
+        return pathStr;
+    };
+
+    // Enhanced path matching function
+    const isPathActive = (href) => {
+        if (!href) return false;
+
+        const currentPath = location.pathname;
+        const targetPath = normalizePath(href);
+
+        console.log('Checking path:', {currentPath, targetPath, href}); // Debug log
+
+        // Exact match first
+        if (currentPath === targetPath) return true;
+
+        // Handle nested paths (e.g., /product/123 should match /product)
+        if (currentPath.startsWith(targetPath + '/')) return true;
+
+        // Special handling for dashboard
+        if (targetPath === '/dashboard' && currentPath === '/dashboard') return true;
+        if (href === '/dashboard' && currentPath === '/dashboard') return true;
+
+        // For relative paths like "product", "categories", "orders"
+        if (!targetPath.startsWith('/')) {
+            const pathSegment = targetPath;
+            return currentPath.includes(`/${pathSegment}`) || currentPath.endsWith(`/${pathSegment}`);
+        }
+
+        const pathSegment = targetPath.replace('/', '');
+        if (pathSegment) {
+            const pathPattern = new RegExp(`^/(${pathSegment})(/|$)`);
+            return pathPattern.test(currentPath);
+        }
+
+        return false;
+    };
+
+    // Helper function to check if any child is active
+    const hasActiveChild = (children) => {
+        if (!children) return false;
+        return children.some(child => isPathActive(child.path));
+    };
 
     // Menu Configuration
     const menuItems = [
@@ -23,7 +73,7 @@ const Sidebar = ({isVisible, onClose}) => {
             id: 'home',
             label: 'Dashboard',
             icon: Home,
-            path: '/admin/dashboard',
+            path: '/dashboard',
             badge: null
         },
         {
@@ -31,19 +81,18 @@ const Sidebar = ({isVisible, onClose}) => {
             label: 'Products',
             icon: Package,
             children: [
-                {id: 'all-product', label: 'All Products', path: path.product},
-                {id: 'categories', label: 'Categories', path: path.categories}
+                {id: 'all-product', label: 'All Products', path: `/${path.product}`},
+                {id: 'categories', label: 'Categories', path: `/${path.categories}`}
             ]
         },
         {
             id: 'orders',
             label: 'Orders',
             icon: ShoppingCart,
-            // badge: '5',
             children: [
-                {id: 'all-orders', label: 'All Orders', path: path.orders},
-                {id: 'pending-orders', label: 'Pending', path: '/admin/orders/pending'},
-                {id: 'completed-orders', label: 'Completed', path: '/admin/orders/completed'}
+                {id: 'all-orders', label: 'All Orders', path: `/${path.orders}`},
+                {id: 'pending-orders', label: 'Pending', path: `/${path.orders}/pending`},
+                {id: 'completed-orders', label: 'Completed', path: `/${path.orders}/completed`}
             ]
         },
         {
@@ -88,7 +137,7 @@ const Sidebar = ({isVisible, onClose}) => {
     // Initialize accordion state based on current route
     useEffect(() => {
         const currentItem = menuItems.find(item =>
-            item.children && item.children.some(child => location.pathname === child.path)
+            item.children && hasActiveChild(item.children)
         );
         if (currentItem) {
             setActiveAccordion(currentItem.id);
@@ -96,23 +145,11 @@ const Sidebar = ({isVisible, onClose}) => {
     }, [location.pathname]);
 
     const handleNavigation = (path) => {
+        console.log('Navigating to:', path); // Debug log
         navigate(path);
         if (window.innerWidth <= 768) {
             onClose();
         }
-    };
-
-    const handleLogout = () => {
-        logout();
-        navigate('/');
-    };
-
-    const isActiveRoute = (path) => {
-        return location.pathname === path;
-    };
-
-    const isActiveParent = (children) => {
-        return children?.some(child => location.pathname === child.path);
     };
 
     const toggleAccordion = (itemId) => {
@@ -128,11 +165,8 @@ const Sidebar = ({isVisible, onClose}) => {
 
     return (
         <aside className={getSidebarClasses()}>
-            {/* Sidebar Header */}
+            {/* Sidebar Header - Only close button for mobile */}
             <div className="sidebar-header">
-                <div className="sidebar-brand">
-                    <img className="sidebar-logo" src={logo}/>
-                </div>
                 <button
                     className="sidebar-close-btn"
                     onClick={onClose}
@@ -148,61 +182,61 @@ const Sidebar = ({isVisible, onClose}) => {
                 <nav className="sidebar-nav">
                     <div className="nav-section">
                         <span className="nav-section-title">Main Menu</span>
-                        {menuItems.map((item) => (
-                            <div key={item.id} className="sidebar-nav-item">
-                                <button
-                                    className={`sidebar-nav-link ${
-                                        isActiveRoute(item.path) ||
-                                        (item.children && isActiveParent(item.children))
-                                            ? 'active'
-                                            : ''
-                                    }`}
-                                    onClick={() => {
-                                        if (item.children) {
-                                            toggleAccordion(item.id);
-                                        } else {
-                                            handleNavigation(item.path);
-                                        }
-                                    }}
-                                >
-                                    <div className="nav-link-content">
-                                        <item.icon size={18} className="nav-icon"/>
-                                        <span className="nav-label">{item.label}</span>
-                                        {item.badge && (
-                                            <span className="nav-badge">{item.badge}</span>
-                                        )}
-                                    </div>
-                                    {item.children && (
-                                        <span className="nav-arrow">
-                                            {activeAccordion === item.id
-                                                ? <ChevronDown size={16}/>
-                                                : <ChevronRight size={16}/>
-                                            }
-                                        </span>
-                                    )}
-                                </button>
+                        {menuItems.map((item) => {
+                            const isActive = isPathActive(item.path) || (item.children && hasActiveChild(item.children));
+                            console.log(`Item ${item.label}:`, {isActive, path: item.path, currentPath: location.pathname}); // Debug log
 
-                                {/* Submenu with smooth animation */}
-                                {item.children && (
-                                    <div className={`sidebar-submenu ${activeAccordion === item.id ? 'open' : ''}`}>
-                                        <div className="submenu-content">
-                                            {item.children.map((child) => (
-                                                <button
-                                                    key={child.id}
-                                                    className={`sidebar-submenu-link ${
-                                                        isActiveRoute(child.path) ? 'active' : ''
-                                                    }`}
-                                                    onClick={() => handleNavigation(child.path)}
-                                                >
-                                                    <span className="submenu-dot"></span>
-                                                    {child.label}
-                                                </button>
-                                            ))}
+                            return (
+                                <div key={item.id} className="sidebar-nav-item">
+                                    <button
+                                        className={`sidebar-nav-link ${isActive ? 'active' : ''}`}
+                                        onClick={() => {
+                                            if (item.children) {
+                                                toggleAccordion(item.id);
+                                            } else {
+                                                handleNavigation(item.path);
+                                            }
+                                        }}
+                                    >
+                                        <div className="nav-link-content">
+                                            <item.icon size={18} className="nav-icon"/>
+                                            <span className="nav-label">{item.label}</span>
+                                            {item.badge && (
+                                                <span className="nav-badge">{item.badge}</span>
+                                            )}
                                         </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
+                                        {item.children && (
+                                            <span className="nav-arrow">
+                                                {activeAccordion === item.id
+                                                    ? <ChevronDown size={16}/>
+                                                    : <ChevronRight size={16}/>
+                                                }
+                                            </span>
+                                        )}
+                                    </button>
+
+                                    {/* Submenu with smooth animation */}
+                                    {item.children && (
+                                        <div className={`sidebar-submenu ${activeAccordion === item.id ? 'open' : ''}`}>
+                                            <div className="submenu-content">
+                                                {item.children.map((child) => (
+                                                    <button
+                                                        key={child.id}
+                                                        className={`sidebar-submenu-link ${
+                                                            isPathActive(child.path) ? 'active' : ''
+                                                        }`}
+                                                        onClick={() => handleNavigation(child.path)}
+                                                    >
+                                                        <span className="submenu-dot"></span>
+                                                        {child.label}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                            );
+                        })}
                     </div>
 
                     {/* Quick Actions Section */}
@@ -212,7 +246,7 @@ const Sidebar = ({isVisible, onClose}) => {
                             <div key={action.id} className="sidebar-nav-item">
                                 <button
                                     className={`sidebar-nav-link ${
-                                        isActiveRoute(action.path) ? 'active' : ''
+                                        isPathActive(action.path) ? 'active' : ''
                                     }`}
                                     onClick={() => handleNavigation(action.path)}
                                 >
@@ -225,31 +259,6 @@ const Sidebar = ({isVisible, onClose}) => {
                         ))}
                     </div>
                 </nav>
-
-                {/* User Profile Section */}
-                <div className="sidebar-user">
-                    <div className="user-avatar">
-                        <UserCircle size={32}/>
-                    </div>
-                    <div className="user-info">
-                        <span className="user-name">Admin User</span>
-                        <span className="user-role">Administrator</span>
-                    </div>
-                    <div className="user-status">
-                        <div className="status-dot online"></div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Sidebar Footer */}
-            <div className="sidebar-footer">
-                <button
-                    className="logout-btn"
-                    onClick={handleLogout}
-                >
-                    <LogOut size={16}/>
-                    <span>Logout</span>
-                </button>
             </div>
         </aside>
     );

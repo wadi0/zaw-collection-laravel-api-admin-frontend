@@ -22,7 +22,92 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
 
     const navigate = useNavigate();
     const location = useLocation();
-    const {isDarkMode, toggleDarkMode, logout} = useApp();
+    const {isDarkMode, toggleDarkMode, logout, user} = useApp();
+
+    // Helper function to get user initials
+    const getUserInitials = (user) => {
+        if (!user) return 'U';
+        
+        if (user.name) {
+            return user.name
+                .split(' ')
+                .map(word => word.charAt(0))
+                .join('')
+                .toUpperCase()
+                .slice(0, 2);
+        }
+        
+        if (user.email) {
+            return user.email.charAt(0).toUpperCase();
+        }
+        
+        return 'U';
+    };
+
+    // Helper function to get display name
+    const getDisplayName = (user) => {
+        if (!user) return 'User';
+        return user.name || user.username || 'User';
+    };
+
+    // Helper function to get display email
+    const getDisplayEmail = (user) => {
+        if (!user) return 'user@example.com';
+        return user.email || 'No email provided';
+    };
+
+    // Helper function to normalize paths for comparison
+    const normalizePath = (pathStr) => {
+        if (!pathStr) return '';
+        if (!pathStr.startsWith('/')) {
+            return `/${pathStr}`;
+        }
+        return pathStr;
+    };
+
+    // Enhanced path matching function
+    const isPathActive = (href) => {
+        if (!href) return false;
+
+        const currentPath = location.pathname;
+        const targetPath = normalizePath(href);
+
+        // Exact match first
+        if (currentPath === targetPath) return true;
+
+        // Handle nested paths
+        if (currentPath.startsWith(targetPath + '/')) return true;
+
+        // Special handling for dashboard
+        if (targetPath === '/dashboard' && currentPath === '/dashboard') return true;
+        if (href === '/dashboard' && currentPath === '/dashboard') return true;
+        if (targetPath === '/admin/dashboard' && currentPath === '/dashboard') return true;
+        if (href === '/admin/dashboard' && currentPath === '/dashboard') return true;
+
+        // Handle admin routes specifically
+        if (targetPath.includes('/admin/')) {
+            return currentPath === targetPath || currentPath.startsWith(targetPath + '/');
+        }
+
+        // For relative paths
+        if (!targetPath.startsWith('/')) {
+            const pathSegment = targetPath;
+            return currentPath.includes(`/${pathSegment}`) || currentPath.endsWith(`/${pathSegment}`);
+        }
+
+        const pathSegment = targetPath.replace('/', '');
+        if (pathSegment) {
+            const pathPattern = new RegExp(`^/(${pathSegment})(/|$)`);
+            return pathPattern.test(currentPath);
+        }
+
+        return false;
+    };
+
+    // Helper function to check if any dropdown item is active
+    const isDropdownActive = (dropdownItems) => {
+        return dropdownItems.some(item => isPathActive(item.href));
+    };
 
     const notificationData = [
         {
@@ -84,7 +169,6 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
         return () => document.removeEventListener('click', handleClickOutside);
     }, []);
 
-
     useEffect(() => {
         setDropdown(null);
         setMobileDropdown(null);
@@ -99,31 +183,29 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
         {
             name: 'Dashboard',
             icon: Home,
-            href: '/admin/dashboard',
-            active: location.pathname === '/admin/dashboard'
+            href: '/dashboard',
         },
         {
             name: 'Products',
             icon: Package,
             dropdown: [
-                {name: 'All Products', href: path.product},
-                {name: 'Categories', href: path.categories}
+                {name: 'All Products', href: `/${path.product}`},
+                {name: 'Categories', href: `/${path.categories}`}
             ]
         },
         {
             name: 'Orders',
             icon: ShoppingCart,
             dropdown: [
-                {name: 'All Orders', href: '/admin/orders'},
-                {name: 'Pending', href: '/admin/orders/pending'},
-                {name: 'Shipped', href: '/admin/orders/shipped'}
+                {name: 'All Orders', href: `/${path.orders}`},
+                {name: 'Pending', href: `/${path.orders}/pending`},
+                {name: 'Shipped', href: `/${path.orders}/shipped`}
             ]
         },
         {
             name: 'Customers',
             icon: Users,
             href: '/admin/customers',
-            active: location.pathname === '/admin/customers'
         },
         {
             name: 'Reports',
@@ -138,13 +220,8 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
             name: 'Shipping',
             icon: Truck,
             href: '/admin/shipping',
-            active: location.pathname === '/admin/shipping'
         }
     ];
-
-    const isDropdownActive = (dropdown) => {
-        return dropdown.some(item => location.pathname === item.href);
-    };
 
     const handleLinkClick = (path) => {
         setDropdown(null);
@@ -220,9 +297,15 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
         }
     };
 
+    const handleSidebarToggle = () => {
+        onToggleSidebar();
+        // Scroll to top when sidebar is opened
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     const handleLogout = () => {
         logout();
-        navigate('/');
+        navigate(path.signin);
     };
 
     return (
@@ -230,14 +313,14 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
             <div className="navbar-wrapper">
                 <div className="navbar-start">
                     <button
-                        onClick={onToggleSidebar}
+                        onClick={handleSidebarToggle}
                         className="sidebar-toggle-btn"
                         title="Toggle Sidebar"
                     >
                         {sidebarVisible ? <PanelLeftClose size={20}/> : <PanelLeft size={20}/>}
                     </button>
                     <Link to={path.home} className="brand-logo">
-                        <img src={logo1} className="navbar-logo" />
+                        <img src={logo1} className="navbar-logo" alt="Logo" />
                     </Link>
                 </div>
 
@@ -289,7 +372,7 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
                                                 <Link
                                                     key={subItem.name}
                                                     to={subItem.href}
-                                                    className="submenu-link"
+                                                    className={`submenu-link ${isPathActive(subItem.href) ? 'is-active' : ''}`}
                                                     onClick={() => handleLinkClick(subItem.href)}
                                                 >
                                                     {subItem.name}
@@ -300,7 +383,7 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
                                 ) : (
                                     <Link
                                         to={item.href}
-                                        className={`menu-link ${item.active ? 'is-active' : ''}`}
+                                        className={`menu-link ${isPathActive(item.href) ? 'is-active' : ''}`}
                                         onClick={handleLinkClick}
                                     >
                                         <item.icon size={18}/>
@@ -372,13 +455,13 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
                             className={`profile-trigger ${profile ? 'is-active' : ''}`}
                             title="Profile Menu"
                         >
-                            <div className="user-avatar">JD</div>
+                            <div className="user-avatar">{getUserInitials(user)}</div>
                         </button>
                         {profile && (
                             <div className={`profile-popup ${profile ? 'is-visible' : ''}`}>
                                 <div className="profile-info">
-                                    <p className="user-name">John Doe</p>
-                                    <p className="user-email">john@example.com</p>
+                                    <p className="user-name">{getDisplayName(user)}</p>
+                                    <p className="user-email">{getDisplayEmail(user)}</p>
                                 </div>
                                 <Link to="/admin/profile" className="profile-link" onClick={handleLinkClick}>
                                     <User size={16}/>
@@ -457,7 +540,7 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
                                             <Link
                                                 key={subItem.name}
                                                 to={subItem.href}
-                                                className="mobile-submenu-link"
+                                                className={`mobile-submenu-link ${isPathActive(subItem.href) ? 'is-active' : ''}`}
                                                 onClick={() => handleLinkClick(subItem.href)}
                                             >
                                                 {subItem.name}
@@ -468,7 +551,7 @@ const Navbar = ({onToggleSidebar, sidebarVisible}) => {
                             ) : (
                                 <Link
                                     to={item.href}
-                                    className={`mobile-menu-link ${item.active ? 'is-active' : ''}`}
+                                    className={`mobile-menu-link ${isPathActive(item.href) ? 'is-active' : ''}`}
                                     onClick={() => handleLinkClick(item.href)}
                                 >
                                     <item.icon size={18}/>

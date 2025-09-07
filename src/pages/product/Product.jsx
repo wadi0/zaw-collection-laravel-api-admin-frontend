@@ -123,7 +123,7 @@ const Products = ({ onDeleteProduct }) => {
             const response = await AxiosServices.get(ApiUrlServices.ALL_CATEGORIES);
             const categoriesData = response.data.data?.data || response.data.data || [];
             setCategories(categoriesData);
-            toast.success("Categories fetch successfully.")
+            // toast.success("Categories fetch successfully.")
         } catch (error) {
             setError('Failed to load categories');
             setCategories([]);
@@ -173,7 +173,7 @@ const Products = ({ onDeleteProduct }) => {
                 to
             });
 
-            toast.success("Product fetch successfully.")
+            // toast.success("Product fetch successfully.")
 
         } catch (error) {
             setError('Failed to load products: ' + (error.response?.data?.message || error.message));
