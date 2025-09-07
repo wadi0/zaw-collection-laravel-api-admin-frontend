@@ -6,9 +6,10 @@
   .custom-select-label {
     display: block;
     margin-bottom: 0.4rem;
-    font-weight: 500;
+    font-weight: 600;
     color: #333;
     text-align: left;
+    text-transform: capitalize;
 
     &.required .required-asterisk {
       color: #ef4444;
@@ -94,20 +95,21 @@
     display: flex;
     align-items: center;
     gap: 4px;
+    font-size: 14px;
 
-    &::before {
-      content: "⚠";
-      font-size: 10px;
-    }
+    // &::before {
+    //   content: "⚠";
+    //   font-size: 10px;
+    // }
   }
 
   // States
-  &.has-error {
-    .custom-select-label,
-    .select-arrow {
-      color: #ef4444;
-    }
-  }
+  // &.has-error {
+  //   .custom-select-label,
+  //   .select-arrow {
+  //     color: #ef4444;
+  //   }
+  // }
 
   &.is-disabled {
     .custom-select-label,

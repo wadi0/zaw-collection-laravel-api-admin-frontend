@@ -286,7 +286,9 @@ const AddProduct = ({product, onSuccess, categoryList}) => {
                                                     }}>
                                                         <h5 style={{margin: 0}}>Product
                                                             Variant {isFirst ? '' : index}</h5>
-                                                        <div style={{display: 'flex', gap: '0.5rem'}}>
+                                                        <div style={{
+                                                            display: 'none',//'flex',
+                                                             gap: '0.5rem'}}>
                                                             {form.values.variants.length > 1 && (
                                                                 <CustomButton
                                                                     type="button"
