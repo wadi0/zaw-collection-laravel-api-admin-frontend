@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { useApp } from "../../context/AppContext.jsx";
 import path from "../../routes/path.jsx";
 import zawlogo from "../../assets/logo.png";
+import {toast} from "react-toastify";
 
 const SignUp = () => {
     const [loading, setLoading] = useState(false);
@@ -46,17 +47,18 @@ const SignUp = () => {
             await AxiosServices.post(ApiUrlServices.SIGN_UP, payload)
                 .then((res) => {
                     resetForm();
-                    // navigate(path.login); // Fix the path reference
                     navigate(path.signin);
                     // toast.success("Sign Up Successfully.")
                 })
         } catch (error) {
             const emailError = error?.response?.data?.msg?.email;
-            // if (emailError?.length) {
-            //     toast.error(emailError[0]);
-            // } else {
-            //     toast.error("Something went wrong.");
-            // }
+            if (emailError?.length) {
+                toast.error(emailError[0]);
+            }else if(error.status === 422){
+                toast.error("The email has already been taken.");
+            } else {
+                toast.error("Something went wrong.");
+            }
 
         } finally {
             setLoading(false);
